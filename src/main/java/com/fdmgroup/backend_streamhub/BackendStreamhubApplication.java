@@ -8,7 +8,6 @@ public class BackendStreamhubApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(BackendStreamhubApplication.class, args);
-		System.out.println("testing running hello world");
 	}
 
 }
