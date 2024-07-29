@@ -1,6 +1,7 @@
 /**
  * Controller class handling requests related to the Index page.
  */
+
 package com.fdmgroup.backend_streamhub.controller;
 
 import org.springframework.stereotype.Controller;
