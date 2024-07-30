@@ -15,10 +15,9 @@
     <div class="requirements">
         <h3>Requirements:</h3>
         <ul>
-            <li><strong>Name:</strong> Exactly 2 words, with each word consisting of at least 3 letters.</li>
-            <li><strong>Username:</strong> Minimum length of 5 characters.</li>
-            <li><strong>Email Address:</strong> Valid email format.</li>
-            <li><strong>Password:</strong> At least 2 letters, 2 digits, and 1 special character.</li>
+            <li><strong>Username:</strong>A word comprising of at least 5 characters.</li>
+            <li><strong>Email Address:</strong> A valid email address.</li>
+            <li><strong>Password:</strong> At least 8 characters, including 1 uppercase letter, 1 number, and 1 special character.</li>
         </ul>
     </div>
 
@@ -26,11 +25,7 @@
         <p th:text="${error}"></p>
     </div>
 
-    <form th:action="@{/register}" method="post">
-        <div>
-            <label for="name">Name:</label>
-            <input type="text" id="name" name="name" placeholder="Name" required>
-        </div>
+    <form th:action="@{/registration}" method="post">
         <div>
             <label for="username">Username:</label>
             <input type="text" id="username" name="username" placeholder="Username" required>
