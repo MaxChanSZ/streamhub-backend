@@ -9,6 +9,50 @@
 <div class="box">
     <a th:href="@{/}" class="back-link">&#8592; Back</a>
     <h1>Registration</h1>
+
+
+    <!-- Registration requirements -->
+    <div class="requirements">
+        <h3>Requirements:</h3>
+        <ul>
+            <li><strong>Name:</strong> Exactly 2 words, with each word consisting of at least 3 letters.</li>
+            <li><strong>Username:</strong> Minimum length of 5 characters.</li>
+            <li><strong>Email Address:</strong> Valid email format.</li>
+            <li><strong>Password:</strong> At least 2 letters, 2 digits, and 1 special character.</li>
+        </ul>
+    </div>
+
+    <div th:if="${error}" class="error-message">
+        <p th:text="${error}"></p>
+    </div>
+
+    <form th:action="@{/register}" method="post">
+        <div>
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" placeholder="Name" required>
+        </div>
+        <div>
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" placeholder="Username" required>
+        </div>
+        <div>
+            <label for="email">Email Address:</label>
+            <input type="email" id="email" name="email" placeholder="Email Address" required>
+        </div>
+        <div>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" placeholder="Password" required>
+        </div>
+        <div>
+            <label for="role">Role:</label>
+            <select id="role" name="role" required>
+                <option value="User">User</option>
+                <option value="Manager">Manager</option>
+            </select>
+        </div>
+        <button type="submit" class="registration-button">Register</button>
+    </form>
+
 </div>
 </body>
 </html>

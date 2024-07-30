@@ -103,3 +103,7 @@ form button:hover {
 .registration-button:hover {
     background-color: green;
 }
+
+.error-message {
+    color: red;
+}
