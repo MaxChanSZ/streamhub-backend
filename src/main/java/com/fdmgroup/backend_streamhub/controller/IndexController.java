@@ -13,7 +13,7 @@ public class IndexController {
     /**
      * Handles the GET request for the Index page.
      *
-     * @return name of the view for the Index page.
+     * @return The name of the view for the Index page.
      */
     @GetMapping("/")
     public String showIndex() {
