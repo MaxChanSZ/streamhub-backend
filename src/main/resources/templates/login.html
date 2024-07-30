@@ -9,6 +9,12 @@
 <div class="box">
     <a th:href="@{/}" class="back-link">&#8592; Back</a>
     <h1>Login</h1>
+
+    <!-- Message to display for successful registration -->
+    <div th:if="${successfulRegistration}" class="successful-registration-message">
+        <p th:text="${successfulRegistration}"></p>
+    </div>
+
 </div>
 </body>
 </html>
