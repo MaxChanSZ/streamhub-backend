@@ -4,11 +4,31 @@
 
 package com.fdmgroup.backend_streamhub.controller;
 
+import com.fdmgroup.backend_streamhub.exceptions.*;
+import com.fdmgroup.backend_streamhub.service.RegistrationService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class RegistrationController {
+
+    /**
+     * Logger to monitor operational flow and facilitate troubleshooting.
+     */
+    private static final Logger registrationControllerLogger = LogManager.getLogger(RegistrationController.class);
+
+    /**
+     * Service for handling user registration operations.
+     */
+    @Autowired
+    private RegistrationService registrationService;
 
     /**
      * Handles the GET request for the Registration page.
@@ -19,5 +39,56 @@ public class RegistrationController {
     public String showRegistration() {
         return "registration";
     }
-    
+
+    /**
+     * Handles the POST request for the Registration page.
+     *
+     * @return  The name of the view for the Login page for successful registration,
+     *          or the name of the view for the Registration page for unsuccessful registration.
+     */
+    @PostMapping("/registration")
+    public String registrationAttempt(@RequestParam String username,
+                                      @RequestParam String email,
+                                      @RequestParam String password,
+                                      RedirectAttributes redirectAttributes,
+                                      Model model) {
+        try {
+            registrationControllerLogger.info("Registration attempt | Username: {}, Email Address: {}, Password: {}",
+                                                username, email, password);
+            registrationService.registerUser(username, email, password);
+            redirectAttributes.addAttribute("successfulRegistration", "Successful registration. Redirection to Login page with successful registration message displayed.");
+            return "redirect:/login";
+
+        } catch (InvalidUsernameException e) {
+            registrationControllerLogger.error("Unsuccessful registration attempt due to invalid username. Username: {}", username);
+            model.addAttribute("error", "Invalid username entered. Please enter a valid username.");
+
+        } catch (InvalidEmailAddressException e) {
+            registrationControllerLogger.error("Unsuccessful registration attempt due to invalid email address. Email address: {}", email);
+            model.addAttribute("error", "Invalid email address entered. Please enter a valid email address.");
+
+        } catch (InvalidPasswordException e) {
+            registrationControllerLogger.error("Unsuccessful registration attempt due to invalid password. Password: {}", password);
+            model.addAttribute("error", "Invalid password entered. Please enter a valid password.");
+
+        } catch (UnavailableEmailAddressException e) {
+            registrationControllerLogger.error("Unsuccessful registration attempt as email address has been registered to another user. Email address: {}", email);
+            model.addAttribute("error", "Email address entered is unavailable. Please enter another email address.");
+
+        } catch (UnavailablePasswordException e) {
+            registrationControllerLogger.error("Unsuccessful registration attempt as password has been registered to another user. Password: {}", password);
+            model.addAttribute("error", "Password entered is unavailable. Please enter another password.");
+
+        } catch (UnavailableUsernameException e) {
+            registrationControllerLogger.error("Unsuccessful registration attempt as username has been registered to another user. Username: {}", username);
+            model.addAttribute("error", "Username entered is unavailable. Please enter another username.");
+
+        } catch (Exception e) {
+            registrationControllerLogger.fatal("Unsuccessful registration attempt due to invalid an unexpected error.");
+            model.addAttribute("error", "An unexpected error occurred. Please try again later.");
+        }
+
+        return "registration";
+    }
+
 }
