@@ -4,5 +4,5 @@
 
 package com.fdmgroup.backend_streamhub.exceptions;
 
-public class InvalidPasswordException {
+public class InvalidPasswordException extends Throwable {
 }
