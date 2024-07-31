@@ -12,7 +12,7 @@ public class VideoProcessingService implements IVideoProcessingService{
 
         // Ensure output directory exists
         outputDir.toFile().mkdirs();
-
+        
         // Create subdirectories for each resolution
         Path dir1080p = outputDir.resolve("1080p");
         Path dir720p = outputDir.resolve("720p");
@@ -49,7 +49,6 @@ public class VideoProcessingService implements IVideoProcessingService{
                                 .addArguments("-hls_time", "10")
                                 .addArguments("-hls_playlist_type", "vod")
                 )
-                .setOverwriteOutput(true)
                 .execute();
     }
 
@@ -69,4 +68,5 @@ public class VideoProcessingService implements IVideoProcessingService{
             e.printStackTrace();
         }
     }
+
 }
