@@ -1,6 +1,7 @@
 /**
  * Service class that handles registration-related operations.
  */
+
 package com.fdmgroup.backend_streamhub.service;
 
 import com.fdmgroup.backend_streamhub.exceptions.*;
