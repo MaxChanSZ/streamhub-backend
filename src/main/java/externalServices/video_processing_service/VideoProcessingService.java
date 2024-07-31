@@ -6,13 +6,13 @@ import java.nio.file.Paths;
 public class VideoProcessingService implements IVideoProcessingService{
     @Override
     public void mp4ToHls(String mp4) {
-        Path input = Paths.get("videos/" + mp4);
+        Path input = Paths.get("src/main/resources/raw/" + mp4);
         String baseName = mp4.substring(0, mp4.lastIndexOf('.'));
-        Path outputDir = Paths.get("encoded/" + baseName);
+        Path outputDir = Paths.get("src/main/resources/encoded/" + baseName);
 
         // Ensure output directory exists
         outputDir.toFile().mkdirs();
-        
+
         // Create subdirectories for each resolution
         Path dir1080p = outputDir.resolve("1080p");
         Path dir720p = outputDir.resolve("720p");

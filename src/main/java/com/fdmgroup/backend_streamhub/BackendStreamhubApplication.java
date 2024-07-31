@@ -12,7 +12,7 @@ public class BackendStreamhubApplication {
 
 		System.out.println("testing running hello world");
 		VideoProcessingService service = new VideoProcessingService();
-		service.mp4ToHls("testVideo.MOV");
+		service.mp4ToHls("steamboatwillie_001.webm");
 	}
 
 }
