@@ -6,20 +6,29 @@ import java.nio.file.Paths;
 public class VideoProcessingService implements IVideoProcessingService{
     @Override
     public void mp4ToHls(String mp4) {
-        Path input = Paths.get(mp4);
-        Path outputDir = Paths.get("output");
+        Path input = Paths.get("videos/" + mp4);
+        String baseName = mp4.substring(0, mp4.lastIndexOf('.'));
+        Path outputDir = Paths.get("encoded/" + baseName);
 
         // Ensure output directory exists
         outputDir.toFile().mkdirs();
 
+        // Create subdirectories for each resolution
+        Path dir1080p = outputDir.resolve("1080p");
+        Path dir720p = outputDir.resolve("720p");
+        Path dir480p = outputDir.resolve("480p");
+        dir1080p.toFile().mkdirs();
+        dir720p.toFile().mkdirs();
+        dir480p.toFile().mkdirs();
+
         // Transcode to 1080p
-        transcodeToHls(input, outputDir.resolve("1080p.m3u8"), 1080, 5000);
+        transcodeToHls(input, dir1080p.resolve("1080p.m3u8"), 1080, 5000);
 
         // Transcode to 720p
-        transcodeToHls(input, outputDir.resolve("720p.m3u8"), 720, 3000);
+        transcodeToHls(input, dir720p.resolve("720p.m3u8"), 720, 3000);
 
         // Transcode to 480p
-        transcodeToHls(input, outputDir.resolve("480p.m3u8"), 480, 1500);
+        transcodeToHls(input, dir480p.resolve("480p.m3u8"), 480, 1500);
 
         // Create the master playlist
         createMasterPlaylist(outputDir, outputDir.resolve("master.m3u8"));
@@ -40,6 +49,7 @@ public class VideoProcessingService implements IVideoProcessingService{
                                 .addArguments("-hls_time", "10")
                                 .addArguments("-hls_playlist_type", "vod")
                 )
+                .setOverwriteOutput(true)
                 .execute();
     }
 
