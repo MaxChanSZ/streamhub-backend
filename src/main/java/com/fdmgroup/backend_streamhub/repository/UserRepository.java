@@ -28,7 +28,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
      * @param email The email address of the User entity.
      * @return an {@link Optional} containing the User entity if found, empty otherwise.
      */
-    Optional<User> findByEmailAddress(String email);
+    Optional<User> findByEmail(String email);
 
     /**
      * Finds a User entity by password.
