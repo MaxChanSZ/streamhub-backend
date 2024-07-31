@@ -1,7 +1,12 @@
 package externalServices.video_processing_service;
 import com.github.kokorin.jaffree.ffmpeg.*;
+
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
 
 public class VideoProcessingService implements IVideoProcessingService{
     @Override
@@ -53,18 +58,18 @@ public class VideoProcessingService implements IVideoProcessingService{
     }
 
     private void createMasterPlaylist(Path outputDir, Path masterPlaylist) {
-        String playlistContent = "#EXTM3U\n" +
-                "#EXT-X-STREAM-INF:BANDWIDTH=5000000,RESOLUTION=1920x1080\n" +
-                "1080p.m3u8\n" +
-                "#EXT-X-STREAM-INF:BANDWIDTH=3000000,RESOLUTION=1280x720\n" +
-                "720p.m3u8\n" +
-                "#EXT-X-STREAM-INF:BANDWIDTH=1500000,RESOLUTION=854x480\n" +
-                "480p.m3u8";
-
         try {
-            java.nio.file.Files.write(masterPlaylist, playlistContent.getBytes());
-            System.out.println("Master playlist created: " + masterPlaylist);
-        } catch (Exception e) {
+            List<String> lines = Arrays.asList(
+                    "#EXTM3U",
+                    "#EXT-X-STREAM-INF:BANDWIDTH=5000000,RESOLUTION=1920x1080",
+                    "1080p/1080p.m3u8",
+                    "#EXT-X-STREAM-INF:BANDWIDTH=3000000,RESOLUTION=1280x720",
+                    "720p/720p.m3u8",
+                    "#EXT-X-STREAM-INF:BANDWIDTH=1500000,RESOLUTION=854x480",
+                    "480p/480p.m3u8"
+            );
+            Files.write(masterPlaylist, lines);
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
