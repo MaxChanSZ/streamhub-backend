@@ -71,7 +71,7 @@ public class RegistrationService {
     }
 
     /**
-     * Checks if a email address is available for registration.
+     * Checks if an email address is available for registration.
      *
      * @param email The email address to check.
      * @return True if the email address has not been registered with any User entity, false otherwise.
@@ -148,7 +148,7 @@ public class RegistrationService {
      * Checks that a username is valid
      *
      * @param   username The username entered during registration.
-     * @return  True if the username comprises of only one word, false otherwise.
+     * @return  True if the username consists of only one word, false otherwise.
      */
     private boolean isValidUsername(String username) {
         String[] word = username.split(" ");
