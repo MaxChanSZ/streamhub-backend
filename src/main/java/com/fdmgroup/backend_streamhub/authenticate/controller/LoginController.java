@@ -2,7 +2,7 @@
  * Controller class handling requests related to the Login page.
  */
 
-package com.fdmgroup.backend_streamhub.controller;
+package com.fdmgroup.backend_streamhub.authenticate.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;

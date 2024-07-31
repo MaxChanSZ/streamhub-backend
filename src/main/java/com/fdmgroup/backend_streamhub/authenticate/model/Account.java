@@ -24,4 +24,27 @@ public class Account {
     private String password;
     private String email;
 
+    /**
+     * Constructor for a Account entity.
+     *
+     * @param username  The username of a Account entity.
+     * @param email     The email address of a Account entity.
+     * @param password  The password of a Account entity.
+     */
+    public Account(String username, String email, String password) {
+        this.username = username;
+        this.email = email;
+        this.password = password;
+    }
+
+    @Override
+    public String toString() {
+        return "Account{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", email='" + email + '\'' +
+                '}';
+    }
+
 }

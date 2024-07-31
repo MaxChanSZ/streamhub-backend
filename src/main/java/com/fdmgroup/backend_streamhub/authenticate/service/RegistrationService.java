@@ -2,11 +2,11 @@
  * Service class that handles registration-related operations.
  */
 
-package com.fdmgroup.backend_streamhub.service;
+package com.fdmgroup.backend_streamhub.authenticate.service;
 
-import com.fdmgroup.backend_streamhub.exceptions.*;
-import com.fdmgroup.backend_streamhub.model.User;
-import com.fdmgroup.backend_streamhub.repository.UserRepository;
+import com.fdmgroup.backend_streamhub.authenticate.exceptions.*;
+import com.fdmgroup.backend_streamhub.authenticate.model.Account;
+import com.fdmgroup.backend_streamhub.authenticate.repository.AccountRepository;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,11 +21,11 @@ public class RegistrationService {
     private static final Logger registrationServiceLogger = LogManager.getLogger(RegistrationService.class);
 
     @Autowired
-    private final UserRepository userRepository;
+    private final AccountRepository accountRepository;
 
     @Autowired
-    public RegistrationService(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public RegistrationService(AccountRepository accountRepository) {
+        this.accountRepository = accountRepository;
     }
 
     /**
@@ -37,11 +37,11 @@ public class RegistrationService {
      * @throws InvalidUsernameException Exception thrown for invalid username.
      */
     public void registerUser(String username, String email, String password) throws InvalidUsernameException,
-                                                                                    InvalidEmailAddressException,
-                                                                                    InvalidPasswordException,
+            InvalidEmailAddressException,
+            InvalidPasswordException,
                                                                                     UnavailableUsernameException,
-                                                                                    UnavailableEmailAddressException,
-                                                                                    UnavailablePasswordException {
+            UnavailableEmailAddressException,
+            UnavailablePasswordException {
         registrationServiceLogger.info("Registration attempt | Username: {}, Email Address: {}, Password: {}",
                                         username, email, password);
 
@@ -69,10 +69,11 @@ public class RegistrationService {
             throw new UnavailablePasswordException();
         }
 
-        userRepository.save(new User(username, email, password));
-        if (userRepository.findByUsername(username).isPresent()) {
-            User registeredUser = userRepository.findByUsername(username).get();
-            registrationServiceLogger.info("Successful registration | {}", registeredUser.toString());
+        Account account = new Account(username, email, password);
+//        accountRepository.save(account);
+        if (accountRepository.findByUsername(username).isPresent()) {
+            Account registeredAccount = accountRepository.findByUsername(username).get();
+            registrationServiceLogger.info("Successful registration | {}", registeredAccount.toString());
         }
     }
 
@@ -83,7 +84,7 @@ public class RegistrationService {
      * @return True if the email address has not been registered with any User entity, false otherwise.
      */
     private boolean isEmailAddressAvailable(String email) {
-        return userRepository.findByEmail(email).isEmpty();
+        return accountRepository.findByEmail(email).isEmpty();
     }
 
     /**
@@ -93,7 +94,7 @@ public class RegistrationService {
      * @return True if the password has not been registered with any User entity, false otherwise.
      */
     private boolean isPasswordAvailable(String password) {
-        return userRepository.findByPassword(password).isEmpty();
+        return accountRepository.findByPassword(password).isEmpty();
     }
 
     /**
@@ -103,7 +104,7 @@ public class RegistrationService {
      * @return True if the username has not been registered with any User entity, false otherwise.
      */
     private boolean isUsernameAvailable(String username) {
-        return userRepository.findByUsername(username).isEmpty();
+        return accountRepository.findByUsername(username).isEmpty();
     }
 
     /**
@@ -150,7 +151,6 @@ public class RegistrationService {
         // Regex pattern for basic email validation
         return trimmedEmail.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
     }
-
 
     /**
      * Checks that a username is valid

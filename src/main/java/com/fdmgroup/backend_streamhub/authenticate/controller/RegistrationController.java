@@ -2,12 +2,12 @@
  * Controller class handling requests related to the Registration page.
  */
 
-package com.fdmgroup.backend_streamhub.controller;
+package com.fdmgroup.backend_streamhub.authenticate.controller;
 
-import com.fdmgroup.backend_streamhub.exceptions.*;
-import com.fdmgroup.backend_streamhub.model.User;
-import com.fdmgroup.backend_streamhub.repository.UserRepository;
-import com.fdmgroup.backend_streamhub.service.RegistrationService;
+import com.fdmgroup.backend_streamhub.authenticate.exceptions.*;
+import com.fdmgroup.backend_streamhub.authenticate.model.Account;
+import com.fdmgroup.backend_streamhub.authenticate.repository.AccountRepository;
+import com.fdmgroup.backend_streamhub.authenticate.service.RegistrationService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +27,7 @@ public class RegistrationController {
     private static final Logger registrationControllerLogger = LogManager.getLogger(RegistrationController.class);
 
     @Autowired
-    private UserRepository userRepository;
+    private AccountRepository accountRepository;
 
     /**
      * Service for handling user registration operations.
@@ -61,9 +61,9 @@ public class RegistrationController {
             registrationControllerLogger.info("Registration attempt | Username: {}, Email Address: {}, Password: {}",
                                                 username, email, password);
             registrationService.registerUser(username, email, password);
-            if (userRepository.findByUsername(username).isPresent()) {
-                User registeredUser = userRepository.findByUsername(username).get();
-                registrationControllerLogger.info("Successful registration | {}", registeredUser.toString());
+            if (accountRepository.findByUsername(username).isPresent()) {
+                Account registeredAccount = accountRepository.findByUsername(username).get();
+                registrationControllerLogger.info("Successful registration | {}", registeredAccount.toString());
             }
             redirectAttributes.addFlashAttribute("successfulRegistration", "Registration successful. Please log in.");
             return "redirect:/login";
