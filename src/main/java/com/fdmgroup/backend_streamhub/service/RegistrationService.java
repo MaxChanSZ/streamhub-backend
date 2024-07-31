@@ -148,12 +148,11 @@ public class RegistrationService {
      * Checks that a username is valid
      *
      * @param   username The username entered during registration.
-     * @return  True of the username comprises of one word, false otherwise.
+     * @return  True if the username comprises of one word, false otherwise.
      */
     private boolean isValidUsername(String username) {
         String[] word = username.split(" ");
         return word.length <= 1;
     }
-
 
 }
