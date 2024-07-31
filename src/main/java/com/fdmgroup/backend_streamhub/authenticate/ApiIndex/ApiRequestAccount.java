@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ApiRequestAccount extends ApiRequest{
+public class ApiRequestAccount {
+    // Currently not used, to change / adjust depending on implementation.
     private Account account;
 }
