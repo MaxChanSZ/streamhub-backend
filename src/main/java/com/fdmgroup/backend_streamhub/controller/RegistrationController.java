@@ -5,6 +5,8 @@
 package com.fdmgroup.backend_streamhub.controller;
 
 import com.fdmgroup.backend_streamhub.exceptions.*;
+import com.fdmgroup.backend_streamhub.model.User;
+import com.fdmgroup.backend_streamhub.repository.UserRepository;
 import com.fdmgroup.backend_streamhub.service.RegistrationService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -23,6 +25,9 @@ public class RegistrationController {
      * Logger to monitor operational flow and facilitate troubleshooting.
      */
     private static final Logger registrationControllerLogger = LogManager.getLogger(RegistrationController.class);
+
+    @Autowired
+    private UserRepository userRepository;
 
     /**
      * Service for handling user registration operations.
@@ -56,39 +61,49 @@ public class RegistrationController {
             registrationControllerLogger.info("Registration attempt | Username: {}, Email Address: {}, Password: {}",
                                                 username, email, password);
             registrationService.registerUser(username, email, password);
-            redirectAttributes.addAttribute("successfulRegistration", "Successful registration. Redirection to Login page with successful registration message displayed.");
+            if (userRepository.findByUsername(username).isPresent()) {
+                User registeredUser = userRepository.findByUsername(username).get();
+                registrationControllerLogger.info("Successful registration | {}", registeredUser.toString());
+            }
+            redirectAttributes.addFlashAttribute("successfulRegistration", "Registration successful. Please log in.");
             return "redirect:/login";
 
         } catch (InvalidUsernameException e) {
             registrationControllerLogger.error("Unsuccessful registration attempt due to invalid username. Username: {}", username);
             model.addAttribute("error", "Invalid username entered. Please enter a valid username.");
+            return "registration";
 
         } catch (InvalidEmailAddressException e) {
             registrationControllerLogger.error("Unsuccessful registration attempt due to invalid email address. Email address: {}", email);
             model.addAttribute("error", "Invalid email address entered. Please enter a valid email address.");
+            return "registration";
 
         } catch (InvalidPasswordException e) {
             registrationControllerLogger.error("Unsuccessful registration attempt due to invalid password. Password: {}", password);
             model.addAttribute("error", "Invalid password entered. Please enter a valid password.");
+            return "registration";
 
         } catch (UnavailableEmailAddressException e) {
             registrationControllerLogger.error("Unsuccessful registration attempt as email address has been registered to another user. Email address: {}", email);
             model.addAttribute("error", "Email address entered is unavailable. Please enter another email address.");
+            return "registration";
 
         } catch (UnavailablePasswordException e) {
             registrationControllerLogger.error("Unsuccessful registration attempt as password has been registered to another user. Password: {}", password);
             model.addAttribute("error", "Password entered is unavailable. Please enter another password.");
+            return "registration";
 
         } catch (UnavailableUsernameException e) {
             registrationControllerLogger.error("Unsuccessful registration attempt as username has been registered to another user. Username: {}", username);
             model.addAttribute("error", "Username entered is unavailable. Please enter another username.");
+            return "registration";
 
         } catch (Exception e) {
             registrationControllerLogger.fatal("Unsuccessful registration attempt due to invalid an unexpected error.");
             model.addAttribute("error", "An unexpected error occurred. Please try again later.");
+            return "registration";
         }
 
-        return "registration";
     }
 
 }
