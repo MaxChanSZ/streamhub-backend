@@ -20,6 +20,7 @@ public class RegistrationService {
      */
     private static final Logger registrationServiceLogger = LogManager.getLogger(RegistrationService.class);
 
+    @Autowired
     private final UserRepository userRepository;
 
     @Autowired
@@ -61,14 +62,18 @@ public class RegistrationService {
         }
 
         if (!isEmailAddressAvailable(email)) {
-            throw new UnavailableUsernameException();
+            throw new UnavailableEmailAddressException();
         }
 
         if (!isPasswordAvailable(password)) {
-            throw new UnavailableUsernameException();
+            throw new UnavailablePasswordException();
         }
 
         userRepository.save(new User(username, email, password));
+        if (userRepository.findByUsername(username).isPresent()) {
+            User registeredUser = userRepository.findByUsername(username).get();
+            registrationServiceLogger.info("Successful registration | {}", registeredUser.toString());
+        }
     }
 
     /**
@@ -78,7 +83,7 @@ public class RegistrationService {
      * @return True if the email address has not been registered with any User entity, false otherwise.
      */
     private boolean isEmailAddressAvailable(String email) {
-        return userRepository.findByEmailAddress(email).isEmpty();
+        return userRepository.findByEmail(email).isEmpty();
     }
 
     /**
@@ -142,18 +147,29 @@ public class RegistrationService {
             return false;
         }
         String trimmedEmail = email.trim();
-        return trimmedEmail.matches("[a-zA-Z][a-zA-Z0-9_]*@[a-zA-Z]+\\.com");
+        // Regex pattern for basic email validation
+        return trimmedEmail.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
     }
+
 
     /**
      * Checks that a username is valid
      *
      * @param   username The username entered during registration.
-     * @return  True if the username consists of only one word, false otherwise.
+     * @return  True if the username consists of only one word and has at least 5 characters, false otherwise.
      */
     private boolean isValidUsername(String username) {
         String[] word = username.split(" ");
-        return word.length == 1;
+        if (word.length != 1) {
+            return false;
+        }
+
+        int numberOfCharacters = 0;
+        for (int i = 0; i < username.length(); i++) {
+            numberOfCharacters++;
+        }
+
+        return numberOfCharacters >= 5;
     }
 
 }
