@@ -155,4 +155,5 @@ public class RegistrationService {
         return word.length <= 1;
     }
 
+
 }
