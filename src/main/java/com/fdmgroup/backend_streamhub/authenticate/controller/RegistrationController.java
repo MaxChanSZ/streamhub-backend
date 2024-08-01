@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping("/registration")
 public class RegistrationController {
 
     /**
@@ -37,23 +38,12 @@ public class RegistrationController {
     private RegistrationService registrationService;
 
     /**
-     * Handles the GET request to the registration endpoint.
-     * This method returns a simple response indicating that the Registration page is available.
-     *
-     * @return A {@code ResponseEntity} containing a message indicating the Registration page status.
-     */
-    @GetMapping("/registration")
-    public ResponseEntity<String> showRegistration() {
-        return ResponseEntity.ok("Registration page.");
-    }
-
-    /**
      * Handles POST requests to the registration endpoint.
      *
      * @param accountRegistrationRequest The {@code Account} object containing user registration data.
      * @return A {@code ResponseEntity} with a status and message indicating the result of the registration attempt.
      */
-    @PostMapping("/registration")
+    @PostMapping("/submit")
     public ResponseEntity<String> registrationAttempt(@RequestBody Account accountRegistrationRequest) {
         String username = accountRegistrationRequest.getUsername();
         String email = accountRegistrationRequest.getEmail();
@@ -96,7 +86,6 @@ public class RegistrationController {
             registrationControllerLogger.fatal("Unsuccessful registration attempt due to invalid an unexpected error.");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unexpected error occurred.");
         }
-
     }
 
 }
