@@ -4,5 +4,5 @@
 
 package com.fdmgroup.backend_streamhub.authenticate.exceptions;
 
-public class UnavailableEmailAddressException extends Throwable {
+public class UnavailableEmailAddressException extends Exception {
 }
