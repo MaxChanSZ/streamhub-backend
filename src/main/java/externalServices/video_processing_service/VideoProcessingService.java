@@ -15,6 +15,12 @@ public class VideoProcessingService implements IVideoProcessingService{
         String baseName = mp4.substring(0, mp4.lastIndexOf('.'));
         Path outputDir = Paths.get("src/main/resources/encoded/" + baseName);
 
+        Path masterPlaylist = outputDir.resolve("master.m3u8");
+        if (Files.exists(masterPlaylist)) {
+            System.out.println("Video has already been encoded.");
+            return;
+        }
+
         // Ensure output directory exists
         outputDir.toFile().mkdirs();
 
