@@ -23,6 +23,10 @@ public class RegistrationController {
      */
     private static final Logger registrationControllerLogger = LogManager.getLogger(RegistrationController.class);
 
+    /**
+     * Repository interface for managing {@link Account} entities.
+     * This repository provides CRUD operations for {@link Account} entities.
+     */
     @Autowired
     private AccountRepository accountRepository;
 
@@ -33,9 +37,10 @@ public class RegistrationController {
     private RegistrationService registrationService;
 
     /**
-     * Handles the GET request for the Registration page.
+     * Handles the GET request to the registration endpoint.
+     * This method returns a simple response indicating that the Registration page is available.
      *
-     * @return The name of the view for the Registration page.
+     * @return A {@code ResponseEntity} containing a message indicating the Registration page status.
      */
     @GetMapping("/registration")
     public ResponseEntity<String> showRegistration() {
@@ -43,10 +48,10 @@ public class RegistrationController {
     }
 
     /**
-     * Handles the POST request for the Registration page.
+     * Handles POST requests to the registration endpoint.
      *
-     * @return  The name of the view for the Login page for successful registration,
-     *          or the name of the view for the Registration page for unsuccessful registration.
+     * @param accountRegistrationRequest The {@code Account} object containing user registration data.
+     * @return A {@code ResponseEntity} with a status and message indicating the result of the registration attempt.
      */
     @PostMapping("/registration")
     public ResponseEntity<String> registrationAttempt(@RequestBody Account accountRegistrationRequest) {
