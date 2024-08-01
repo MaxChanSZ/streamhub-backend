@@ -25,7 +25,7 @@ public class Account {
     private String email;
 
     /**
-     * Constructor for a Account entity.
+     * Constructor for an Account entity.
      *
      * @param username  The username of a Account entity.
      * @param email     The email address of a Account entity.
@@ -37,6 +37,11 @@ public class Account {
         this.password = password;
     }
 
+    /**
+     * Returns a String representation of the {@code Account} entity.
+     *
+     * @return a String representation of the {@code Account} entity.
+     */
     @Override
     public String toString() {
         return "Account{" +
