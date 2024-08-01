@@ -1,0 +1,75 @@
+/* login.css: Styling for login.html */
+
+body {
+    background-color: black;
+}
+
+.box {
+    position: absolute;
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    background-color: #f0f0f0;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 300px;
+}
+
+.box h1 {
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.box a {
+    display: block; /* Ensure links are block elements */
+    text-decoration: none;
+    color: #007bff; /* Blue color for links */
+    margin-bottom: 10px;
+    font-size: 18px;
+}
+
+.box a:hover {
+    text-decoration: underline;
+}
+
+form {
+    margin-top: 20px;
+}
+
+form label {
+    display: block;
+    margin-bottom: 10px;
+    color: #333;
+    font-weight: bold;
+}
+
+form input[type="text"],
+form input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+form button {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+form button:hover {
+    background-color: #0056b3;
+}
+
+.successful-registration-message {
+    color: green;
+}

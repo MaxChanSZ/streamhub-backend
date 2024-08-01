@@ -1,0 +1,40 @@
+/* index.css: Styling for index.html */
+
+body {
+    background-color: black;
+}
+
+.box {
+    position: absolute;
+    top: 25%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    background-color: #f0f0f0;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 400px;
+    min-height: 170px;
+}
+
+.box h1 {
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.box a {
+    display: block;
+    text-decoration: none;
+    color: #007bff;
+    margin-bottom: 10px;
+    font-size: 18px;
+}
+
+.box a:hover {
+    text-decoration: underline;
+}
+
+.logout-message {
+    color: green;
+}
