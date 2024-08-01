@@ -4,5 +4,5 @@
 
 package com.fdmgroup.backend_streamhub.authenticate.exceptions;
 
-public class UnavailableUsernameException extends Throwable {
+public class UnavailableUsernameException extends Exception {
 }

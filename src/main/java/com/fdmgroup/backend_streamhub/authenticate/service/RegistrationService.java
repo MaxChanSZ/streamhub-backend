@@ -70,7 +70,7 @@ public class RegistrationService {
         }
 
         Account account = new Account(username, email, password);
-//        accountRepository.save(account);
+        accountRepository.save(account);
         if (accountRepository.findByUsername(username).isPresent()) {
             Account registeredAccount = accountRepository.findByUsername(username).get();
             registrationServiceLogger.info("Successful registration | {}", registeredAccount.toString());
