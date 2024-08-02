@@ -25,13 +25,6 @@ public class RegistrationController {
     private static final Logger registrationControllerLogger = LogManager.getLogger(RegistrationController.class);
 
     /**
-     * Repository interface for managing {@link Account} entities.
-     * This repository provides CRUD operations for {@link Account} entities.
-     */
-    @Autowired
-    private AccountRepository accountRepository;
-
-    /**
      * Service for handling user registration operations.
      */
     @Autowired
@@ -52,10 +45,6 @@ public class RegistrationController {
             registrationControllerLogger.info("Registration attempt | Username: {}, Email Address: {}, Password: {}",
                                                 username, email, password);
             registrationService.registerUser(username, email, password);
-            if (accountRepository.findByUsername(username).isPresent()) {
-                Account registeredAccount = accountRepository.findByUsername(username).get();
-                registrationControllerLogger.info("Successful registration | {}", registeredAccount.toString());
-            }
             return ResponseEntity.status(HttpStatus.CREATED).body("Registration successful. Please log in.");
 
         } catch (InvalidUsernameException e) {
