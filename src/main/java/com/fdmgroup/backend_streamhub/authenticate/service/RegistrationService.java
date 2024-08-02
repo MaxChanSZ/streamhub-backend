@@ -20,9 +20,16 @@ public class RegistrationService {
      */
     private static final Logger registrationServiceLogger = LogManager.getLogger(RegistrationService.class);
 
+    /**
+     * Repository for account operations.
+     */
     @Autowired
     private final AccountRepository accountRepository;
 
+    /**
+     * Constructs a {@code RegistrationService} with the specified {@link AccountRepository}.
+     * @param accountRepository the {@link AccountRepository} to be used by the {@link RegistrationService}.
+     */
     @Autowired
     public RegistrationService(AccountRepository accountRepository) {
         this.accountRepository = accountRepository;
@@ -37,11 +44,11 @@ public class RegistrationService {
      * @throws InvalidUsernameException Exception thrown for invalid username.
      */
     public void registerUser(String username, String email, String password) throws InvalidUsernameException,
-            InvalidEmailAddressException,
-            InvalidPasswordException,
+                                                                                    InvalidEmailAddressException,
+                                                                                    InvalidPasswordException,
                                                                                     UnavailableUsernameException,
-            UnavailableEmailAddressException,
-            UnavailablePasswordException {
+                                                                                    UnavailableEmailAddressException,
+                                                                                    UnavailablePasswordException {
         registrationServiceLogger.info("Registration attempt | Username: {}, Email Address: {}, Password: {}",
                                         username, email, password);
 
