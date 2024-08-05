@@ -3,7 +3,6 @@ package com.fdmgroup.backend_streamhub.authenticate.controller;
 import com.fdmgroup.backend_streamhub.authenticate.model.Account;
 import com.fdmgroup.backend_streamhub.authenticate.ApiIndex.ApiResponse;
 import com.fdmgroup.backend_streamhub.authenticate.ApiIndex.ApiResponseAccount;
-import com.fdmgroup.backend_streamhub.authenticate.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,9 +10,6 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class AccountController {
-
-    @Autowired
-    private AccountService accountService;
 
     @GetMapping("/account/testing")
     public ResponseEntity<String> accTesting() {

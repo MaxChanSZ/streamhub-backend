@@ -1,3 +1,7 @@
+/**
+ * Entity class for a registered user.
+ */
+
 package com.fdmgroup.backend_streamhub.authenticate.model;
 
 import jakarta.persistence.Entity;
@@ -16,20 +20,34 @@ import lombok.Setter;
 @Setter
 public class Account {
 
+    /**
+     * The identification number of an Account entity.
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
+    /**
+     * The username of an Account entity.
+     */
     private String username;
+
+    /**
+     * The password of an Account entity.
+     */
     private String password;
+
+    /**
+     * The email address of an Account entity.
+     */
     private String email;
 
     /**
      * Constructor for an Account entity.
      *
-     * @param username  The username of a Account entity.
-     * @param email     The email address of a Account entity.
-     * @param password  The password of a Account entity.
+     * @param username  The username of an Account entity.
+     * @param email     The email address of an Account entity.
+     * @param password  The password of an Account entity.
      */
     public Account(String username, String email, String password) {
         this.username = username;
@@ -47,7 +65,6 @@ public class Account {
         return "Account{" +
                 "id=" + id +
                 ", username='" + username + '\'' +
-                ", password='" + password + '\'' +
                 ", email='" + email + '\'' +
                 '}';
     }
