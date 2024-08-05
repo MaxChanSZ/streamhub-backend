@@ -3,6 +3,7 @@ package com.fdmgroup.backend_streamhub.authenticate.controller;
 import com.fdmgroup.backend_streamhub.authenticate.model.Account;
 import com.fdmgroup.backend_streamhub.authenticate.ApiIndex.ApiResponse;
 import com.fdmgroup.backend_streamhub.authenticate.ApiIndex.ApiResponseAccount;
+import com.fdmgroup.backend_streamhub.authenticate.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +11,13 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class AccountController {
+
+    private final AccountService accountService;
+
+    @Autowired
+    public AccountController(AccountService accountService) {
+        this.accountService = accountService;
+    }
 
     @GetMapping("/account/testing")
     public ResponseEntity<String> accTesting() {
@@ -43,6 +51,27 @@ public class AccountController {
 //        response.setAccount = mockAccount;
 //        response.setMessage("Account function failed");
 //        response.setStatusCode(/*"UPDATE THIS BASED ON ERROR. EG - 404 BAD REQUEST / 401 UNAUTHORIZED"*/);
+
+        return response;
+    }
+
+    @PutMapping("/account/api/update")
+    public ApiResponseAccount AccountUpdate(@RequestBody Account inputAccount) {
+        // TO ADD: Account creation/update logic.
+        Account updatedAccount = accountService.updateAccount(inputAccount);
+
+        ApiResponseAccount response = new ApiResponseAccount();
+
+        if (updatedAccount != null) {
+            response.setAccount(updatedAccount);
+            response.setMessage("Account update completed");
+            response.setStatusCode("200 OK");
+
+        } else {
+            response.setAccount(null);
+            response.setMessage("Account update failed");
+            response.setStatusCode(String.valueOf(HttpStatus.BAD_REQUEST.value()));
+        }
 
         return response;
     }
