@@ -6,7 +6,6 @@ package com.fdmgroup.backend_streamhub.authenticate.controller;
 
 import com.fdmgroup.backend_streamhub.authenticate.exceptions.*;
 import com.fdmgroup.backend_streamhub.authenticate.model.Account;
-import com.fdmgroup.backend_streamhub.authenticate.repository.AccountRepository;
 import com.fdmgroup.backend_streamhub.authenticate.service.RegistrationService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
