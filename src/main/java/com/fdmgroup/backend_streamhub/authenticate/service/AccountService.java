@@ -26,5 +26,14 @@ public class AccountService {
                 .orElse(null); // Account not found
     }
 
+    public boolean deleteAccount(long accountId) {
+        return accountRepository.findById(accountId)
+                .map(account -> {
+                    accountRepository.delete(account);
+                    return true; // Account deleted successfully
+                })
+                .orElse(false); // Account not found
+    }
+
 
 }

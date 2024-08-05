@@ -75,4 +75,20 @@ public class AccountController {
 
         return response;
     }
+
+    @DeleteMapping("/delete/{id}")
+    public ApiResponseAccount deleteAccount(@PathVariable("id") long accountId) {
+        ApiResponseAccount response = new ApiResponseAccount();
+        boolean deletionStatus = accountService.deleteAccount(accountId);
+
+        if (deletionStatus) {
+            response.setMessage("Account deleted successfully");
+            response.setStatusCode(String.valueOf(HttpStatus.OK.value()));
+        } else {
+            response.setMessage("Account not found or delete operation failed");
+            response.setStatusCode(String.valueOf(HttpStatus.NOT_FOUND.value()));
+        }
+
+        return response;
+    }
 }
