@@ -4,6 +4,6 @@
 
 package com.fdmgroup.backend_streamhub.authenticate.exceptions;
 
-public class IncorrectPasswordExemption extends Throwable {
+public class IncorrectPasswordException extends Throwable {
 
 }

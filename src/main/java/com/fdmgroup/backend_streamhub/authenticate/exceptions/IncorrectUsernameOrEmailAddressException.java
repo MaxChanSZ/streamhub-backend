@@ -1,9 +1,9 @@
 /**
- * Exception thrown for invalid login credentials encountered during login.
+ * Exception thrown for invalid username or email address entered during login.
  */
 
 package com.fdmgroup.backend_streamhub.authenticate.exceptions;
 
-public class UnsuccessfulLoginException extends Throwable {
+public class IncorrectUsernameOrEmailAddressException extends Throwable {
 
 }
