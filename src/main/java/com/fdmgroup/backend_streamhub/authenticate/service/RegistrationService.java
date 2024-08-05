@@ -49,8 +49,8 @@ public class RegistrationService {
                                                                                     UnavailableUsernameException,
                                                                                     UnavailableEmailAddressException,
                                                                                     UnavailablePasswordException {
-        registrationServiceLogger.info("Registration attempt | Username: {}, Email Address: {}, Password: {}",
-                                        username, email, password);
+        registrationServiceLogger.info("Registration attempt | Username: {}, Email Address: {}",
+                                        username, email);
 
         if (!isValidUsername(username)) {
             throw new InvalidUsernameException();

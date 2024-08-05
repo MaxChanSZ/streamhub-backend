@@ -41,8 +41,8 @@ public class RegistrationController {
         String email = accountRegistrationRequest.getEmail();
         String password = accountRegistrationRequest.getPassword();
         try {
-            registrationControllerLogger.info("Registration attempt | Username: {}, Email Address: {}, Password: {}",
-                                                username, email, password);
+            registrationControllerLogger.info("Registration attempt | Username: {}, Email Address: {}",
+                                                username, email);
             registrationService.registerUser(username, email, password);
             return ResponseEntity.status(HttpStatus.CREATED).body("Registration successful. Please log in.");
 
@@ -55,7 +55,7 @@ public class RegistrationController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid email address entered.");
 
         } catch (InvalidPasswordException e) {
-            registrationControllerLogger.error("Unsuccessful registration attempt due to invalid password. Password: {}", password);
+            registrationControllerLogger.error("Unsuccessful registration attempt due to invalid password.");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid password entered.");
 
         } catch (UnavailableEmailAddressException e) {
@@ -63,7 +63,7 @@ public class RegistrationController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email address entered is unavailable.");
 
         } catch (UnavailablePasswordException e) {
-            registrationControllerLogger.error("Unsuccessful registration attempt as password has been registered to another user. Password: {}", password);
+            registrationControllerLogger.error("Unsuccessful registration attempt as password has been registered to another user.");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Password entered is unavailable.");
 
         } catch (UnavailableUsernameException e) {
