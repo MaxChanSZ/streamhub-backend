@@ -21,24 +21,24 @@ import lombok.Setter;
 public class Account {
 
     /**
-     * The identification number of an account.
+     * The identification number of an Account entity.
      */
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
     /**
-     * The username of an account.
+     * The username of an Account entity.
      */
     private String username;
 
     /**
-     * The password of an account.
+     * The password of an Account entity.
      */
     private String password;
 
     /**
-     * The email address of an account.
+     * The email address of an Account entity.
      */
     private String email;
 
