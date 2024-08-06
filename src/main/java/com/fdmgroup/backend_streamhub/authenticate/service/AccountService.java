@@ -25,7 +25,7 @@ public class AccountService {
     }
 
    public void loginUser(LoginRequest loginRequest) throws IncorrectUsernameOrEmailAddressException, IncorrectPasswordException {
-        accountServiceLogger.info("Login attempt | {}", loginRequest.toString());
+        accountServiceLogger.info("Login attempt | {}.", loginRequest.toString());
 
         // Retrieve an account by username. If not found, retrieve by email address.
         Optional<Account> account = accountRepository.findByUsername(loginRequest.getUsernameOrEmail());
