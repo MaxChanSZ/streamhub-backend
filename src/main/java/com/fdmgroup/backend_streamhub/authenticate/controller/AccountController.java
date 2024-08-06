@@ -61,17 +61,17 @@ public class AccountController {
     @PostMapping("/account/login/submit")
     public ResponseEntity<String> registrationAttempt(@RequestBody LoginRequest loginRequest) {
         try {
-            accountControllerLogger.info("Login attempt | {}", loginRequest.toString());
+            accountControllerLogger.info("Login attempt | {}.", loginRequest.toString());
             accountService.loginUser(loginRequest);
             return ResponseEntity.status(HttpStatus.OK).body("Login successful.");
 
         } catch (IncorrectUsernameOrEmailAddressException e) {
-            accountControllerLogger.error("Unsuccessful login due to incorrect username or email address entered.");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid username or email address entered.");
+            accountControllerLogger.error("Unsuccessful login due to incorrect username or email address.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Incorrect username or email address entered.");
 
         } catch (IncorrectPasswordException e) {
-            accountControllerLogger.error("Unsuccessful login due to incorrect password entered.");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid password entered.");
+            accountControllerLogger.error("Unsuccessful login due to incorrect password.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Incorrect password entered.");
 
         } catch (Exception e) {
             accountControllerLogger.fatal("Unsuccessful registration attempt due to invalid an unexpected error.");

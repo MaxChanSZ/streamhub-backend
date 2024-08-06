@@ -31,21 +31,18 @@ public class AccountService {
         Optional<Account> account = accountRepository.findByUsername(loginRequest.getUsernameOrEmail());
         if (account.isEmpty()) {
             account = accountRepository.findByEmail(loginRequest.getUsernameOrEmail());
-            accountServiceLogger.info("Login attempt via email: {}.", loginRequest.getUsernameOrEmail());
-        } else {
-            accountServiceLogger.info("Login attempt via username: {}.", loginRequest.getUsernameOrEmail());
         }
 
         // Unsuccessful login due to incorrect username or email address.
         if (account.isEmpty()) {
-            accountServiceLogger.error("Unsuccessful login attempt due to incorrect username or email address.");
+            accountServiceLogger.error("Unsuccessful login due to incorrect username or email address.");
             throw new IncorrectUsernameOrEmailAddressException();
         }
 
         // Unsuccessful login due to incorrect password.
         String accountPassword = account.get().getPassword();
         if (!accountPassword.equals(loginRequest.getPassword())) {
-            accountServiceLogger.error("Unsuccessful login attempt due to incorrect password.");
+            accountServiceLogger.error("Unsuccessful login due to incorrect password.");
             throw new IncorrectPasswordException();
         }
 
