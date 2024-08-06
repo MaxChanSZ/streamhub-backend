@@ -2,8 +2,9 @@ package com.fdmgroup.backend_streamhub.authenticate.controller;
 
 import com.fdmgroup.backend_streamhub.authenticate.dto.LoginRequest;
 import com.fdmgroup.backend_streamhub.authenticate.dto.LoginResponse;
-import com.fdmgroup.backend_streamhub.authenticate.exceptions.IncorrectPasswordException;
-import com.fdmgroup.backend_streamhub.authenticate.exceptions.UsernameNotFoundException;
+import com.fdmgroup.backend_streamhub.authenticate.dto.RegistrationRequest;
+import com.fdmgroup.backend_streamhub.authenticate.dto.RegistrationResponse;
+import com.fdmgroup.backend_streamhub.authenticate.exceptions.*;
 import com.fdmgroup.backend_streamhub.authenticate.model.Account;
 import com.fdmgroup.backend_streamhub.authenticate.ApiIndex.ApiResponse;
 import com.fdmgroup.backend_streamhub.authenticate.ApiIndex.ApiResponseAccount;
@@ -59,6 +60,48 @@ public class AccountController {
         return response;
     }
 
+
+    @PostMapping("/account/registration/submit")
+    public ResponseEntity<?> registrationAttempt(@RequestBody RegistrationRequest registrationRequest) {
+        String username = registrationRequest.getUsername();
+        String email = registrationRequest.getEmail();
+        try {
+            accountControllerLogger.info("Registration attempt | {}", registrationRequest.toString());
+            Account account = accountService.registerUser(registrationRequest);
+            RegistrationResponse registrationResponse = new RegistrationResponse(account.getId(), account.getUsername(), account.getEmail());
+            accountControllerLogger.info("Successful registration | {}", registrationResponse.toString());
+            return ResponseEntity.status(HttpStatus.CREATED).body(registrationResponse);
+
+        } catch (InvalidUsernameException e) {
+            accountControllerLogger.error("Unsuccessful registration attempt due to invalid username. Username: {}", username);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid username entered.");
+
+        } catch (InvalidEmailAddressException e) {
+            accountControllerLogger.error("Unsuccessful registration attempt due to invalid email address. Email address: {}", email);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid email address entered.");
+
+        } catch (InvalidPasswordException e) {
+            accountControllerLogger.error("Unsuccessful registration attempt due to invalid password.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid password entered.");
+
+        } catch (UnavailableEmailAddressException e) {
+            accountControllerLogger.error("Unsuccessful registration attempt as email address has been registered to another user. Email address: {}", email);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email address entered is unavailable.");
+
+        } catch (UnavailablePasswordException e) {
+            accountControllerLogger.error("Unsuccessful registration attempt as password has been registered to another user.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Password entered is unavailable.");
+
+        } catch (UnavailableUsernameException e) {
+            accountControllerLogger.error("Unsuccessful registration attempt as username has been registered to another user. Username: {}", username);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username entered is unavailable.");
+
+        } catch (Exception e) {
+            accountControllerLogger.fatal("Unsuccessful registration attempt due to invalid an unexpected error.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unexpected error occurred.");
+        }
+    }
+
     @PostMapping("/account/login/submit")
     public ResponseEntity<?> loginAttempt(@RequestBody LoginRequest loginRequest) {
         try {
@@ -77,7 +120,7 @@ public class AccountController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Incorrect password entered.");
 
         } catch (Exception e) {
-            accountControllerLogger.fatal("Unsuccessful registration attempt due to invalid an unexpected error.");
+            accountControllerLogger.fatal("Unsuccessful login attempt due to invalid an unexpected error.");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unexpected error occurred.");
         }
     }
