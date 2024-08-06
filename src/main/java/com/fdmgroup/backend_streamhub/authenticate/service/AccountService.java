@@ -28,10 +28,10 @@ public class AccountService {
                                                                 IncorrectPasswordException {
         accountServiceLogger.info("Login attempt | {}.", loginRequest.toString());
 
-        // Retrieve an account by username. If not found, retrieve by email address.
+        // Retrieve an account by username.
         Optional<Account> accountOptional = accountRepository.findByUsername(loginRequest.getUsername());
 
-       // Unsuccessful login due to incorrect username or email address.
+       // Unsuccessful login due to incorrect username.
        if (accountOptional.isEmpty()) {
            accountServiceLogger.error("Unsuccessful login as username entered not found.");
            throw new UsernameNotFoundException();
