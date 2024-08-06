@@ -2,7 +2,7 @@ package com.fdmgroup.backend_streamhub.authenticate.service;
 
 import com.fdmgroup.backend_streamhub.authenticate.dto.LoginRequest;
 import com.fdmgroup.backend_streamhub.authenticate.exceptions.IncorrectPasswordException;
-import com.fdmgroup.backend_streamhub.authenticate.exceptions.IncorrectUsernameOrEmailAddressException;
+import com.fdmgroup.backend_streamhub.authenticate.exceptions.UsernameNotFoundException;
 import com.fdmgroup.backend_streamhub.authenticate.model.Account;
 import com.fdmgroup.backend_streamhub.authenticate.repository.AccountRepository;
 import org.apache.logging.log4j.LogManager;
@@ -24,20 +24,17 @@ public class AccountService {
         this.accountRepository = accountRepository;
     }
 
-   public Account loginUser(LoginRequest loginRequest) throws   IncorrectUsernameOrEmailAddressException,
+   public Account loginUser(LoginRequest loginRequest) throws   UsernameNotFoundException,
                                                                 IncorrectPasswordException {
         accountServiceLogger.info("Login attempt | {}.", loginRequest.toString());
 
         // Retrieve an account by username. If not found, retrieve by email address.
-        Optional<Account> accountOptional = accountRepository.findByUsername(loginRequest.getUsernameOrEmail());
-        if (accountOptional.isEmpty()) {
-            accountOptional = accountRepository.findByEmail(loginRequest.getUsernameOrEmail());
-        }
+        Optional<Account> accountOptional = accountRepository.findByUsername(loginRequest.getUsername());
 
        // Unsuccessful login due to incorrect username or email address.
        if (accountOptional.isEmpty()) {
-           accountServiceLogger.error("Unsuccessful login due to incorrect username or email address.");
-           throw new IncorrectUsernameOrEmailAddressException();
+           accountServiceLogger.error("Unsuccessful login as username entered not found.");
+           throw new UsernameNotFoundException();
        }
 
         Account account = accountOptional.get();

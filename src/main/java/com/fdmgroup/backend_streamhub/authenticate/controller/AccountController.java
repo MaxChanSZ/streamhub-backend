@@ -3,7 +3,7 @@ package com.fdmgroup.backend_streamhub.authenticate.controller;
 import com.fdmgroup.backend_streamhub.authenticate.dto.LoginRequest;
 import com.fdmgroup.backend_streamhub.authenticate.dto.LoginResponse;
 import com.fdmgroup.backend_streamhub.authenticate.exceptions.IncorrectPasswordException;
-import com.fdmgroup.backend_streamhub.authenticate.exceptions.IncorrectUsernameOrEmailAddressException;
+import com.fdmgroup.backend_streamhub.authenticate.exceptions.UsernameNotFoundException;
 import com.fdmgroup.backend_streamhub.authenticate.model.Account;
 import com.fdmgroup.backend_streamhub.authenticate.ApiIndex.ApiResponse;
 import com.fdmgroup.backend_streamhub.authenticate.ApiIndex.ApiResponseAccount;
@@ -64,13 +64,13 @@ public class AccountController {
         try {
             accountControllerLogger.info("Login attempt | {}.", loginRequest.toString());
             Account account = accountService.loginUser(loginRequest);
-            LoginResponse loginResponse = new LoginResponse(account.getId(), account.getUsername(), account.getEmail());
+            LoginResponse loginResponse = new LoginResponse(account.getId(), account.getUsername());
             accountControllerLogger.info("Successful login | {}", loginResponse.toString());
             return ResponseEntity.status(HttpStatus.OK).body(loginResponse);
 
-        } catch (IncorrectUsernameOrEmailAddressException e) {
-            accountControllerLogger.error("Unsuccessful login due to incorrect username or email address.");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Incorrect username or email address entered.");
+        } catch (UsernameNotFoundException e) {
+            accountControllerLogger.error("Unsuccessful login as username entered not found.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username entered cannot be found.");
 
         } catch (IncorrectPasswordException e) {
             accountControllerLogger.error("Unsuccessful login due to incorrect password.");

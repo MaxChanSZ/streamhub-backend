@@ -9,13 +9,13 @@ import lombok.NoArgsConstructor;
 @Getter
 public class LoginRequest {
 
-    String usernameOrEmail;
+    String username;
     String password;
 
     @Override
     public String toString() {
         return "LoginRequest{" +
-                "usernameOrEmail='" + usernameOrEmail + '\'' +
+                "username='" + username + '\'' +
                 '}';
     }
 

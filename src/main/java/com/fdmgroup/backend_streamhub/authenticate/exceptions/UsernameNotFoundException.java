@@ -4,6 +4,6 @@
 
 package com.fdmgroup.backend_streamhub.authenticate.exceptions;
 
-public class IncorrectUsernameOrEmailAddressException extends Throwable {
+public class UsernameNotFoundException extends Throwable {
 
 }

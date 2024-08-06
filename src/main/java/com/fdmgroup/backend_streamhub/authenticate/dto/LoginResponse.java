@@ -11,14 +11,12 @@ public class LoginResponse {
 
     private long id;
     private String username;
-    private String email;
 
     @Override
     public String toString() {
         return "LoginResponse{" +
                 "id=" + id +
                 ", username='" + username + '\'' +
-                ", email='" + email + '\'' +
                 '}';
     }
 
