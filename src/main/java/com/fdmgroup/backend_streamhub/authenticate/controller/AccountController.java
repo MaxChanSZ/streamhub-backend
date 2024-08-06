@@ -6,7 +6,7 @@ import com.fdmgroup.backend_streamhub.authenticate.exceptions.IncorrectUsernameO
 import com.fdmgroup.backend_streamhub.authenticate.model.Account;
 import com.fdmgroup.backend_streamhub.authenticate.ApiIndex.ApiResponse;
 import com.fdmgroup.backend_streamhub.authenticate.ApiIndex.ApiResponseAccount;
-import com.fdmgroup.backend_streamhub.authenticate.service.LoginService;
+import com.fdmgroup.backend_streamhub.authenticate.service.AccountService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,7 @@ public class AccountController {
     private static final Logger accountControllerLogger = LogManager.getLogger(AccountController.class);
 
     @Autowired
-    private LoginService loginService;
+    private AccountService accountService;
 
     @GetMapping("/account/testing")
     public ResponseEntity<String> accTesting() {
@@ -62,7 +62,7 @@ public class AccountController {
     public ResponseEntity<String> registrationAttempt(@RequestBody LoginRequest loginRequest) {
         try {
             accountControllerLogger.info("Login attempt | {}", loginRequest.toString());
-            loginService.loginUser(loginRequest);
+            accountService.loginUser(loginRequest);
             return ResponseEntity.status(HttpStatus.OK).body("Login successful.");
 
         } catch (IncorrectUsernameOrEmailAddressException e) {

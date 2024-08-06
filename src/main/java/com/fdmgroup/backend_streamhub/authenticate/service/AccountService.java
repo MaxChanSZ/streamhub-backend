@@ -1,7 +1,3 @@
-/**
- * Service class that handles login-related operations.
- */
-
 package com.fdmgroup.backend_streamhub.authenticate.service;
 
 import com.fdmgroup.backend_streamhub.authenticate.dto.LoginRequest;
@@ -17,33 +13,18 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
-public class LoginService {
+public class AccountService {
 
-    /**
-     * Logger to monitor operational flow and facilitate troubleshooting.
-     */
-    private static final Logger loginServiceLogger = LogManager.getLogger(LoginService.class);
+    private static final Logger loginServiceLogger = LogManager.getLogger(AccountService.class);
 
-    /**
-     * Repository for account-related operations.
-     */
     @Autowired
     private AccountRepository accountRepository;
 
-    /**
-     * Constructs a {@code LoginService} with the specified {@link AccountRepository}
-     */
-    public LoginService(AccountRepository accountRepository) {
+    public AccountService(AccountRepository accountRepository) {
         this.accountRepository = accountRepository;
     }
 
-    /**
-     * Logs in the user.
-     *
-     * @param loginRequest The LoginRequest object containing user login data.
-     * @throws IncorrectUsernameOrEmailAddressException The exception thrown for an unsuccessful login attempt due to invalid username or email address of password.
-     */
-    public void loginUser(LoginRequest loginRequest) throws IncorrectUsernameOrEmailAddressException, IncorrectPasswordException {
+   public void loginUser(LoginRequest loginRequest) throws IncorrectUsernameOrEmailAddressException, IncorrectPasswordException {
         loginServiceLogger.info("Login attempt | {}", loginRequest.toString());
 
         // Retrieve an account by username. If not found, retrieve by email address.
