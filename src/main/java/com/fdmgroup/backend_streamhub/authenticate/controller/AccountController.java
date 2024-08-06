@@ -1,6 +1,7 @@
 package com.fdmgroup.backend_streamhub.authenticate.controller;
 
 import com.fdmgroup.backend_streamhub.authenticate.dto.LoginRequest;
+import com.fdmgroup.backend_streamhub.authenticate.dto.LoginResponse;
 import com.fdmgroup.backend_streamhub.authenticate.exceptions.IncorrectPasswordException;
 import com.fdmgroup.backend_streamhub.authenticate.exceptions.IncorrectUsernameOrEmailAddressException;
 import com.fdmgroup.backend_streamhub.authenticate.model.Account;
@@ -59,11 +60,12 @@ public class AccountController {
     }
 
     @PostMapping("/account/login/submit")
-    public ResponseEntity<String> registrationAttempt(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<?> loginAttempt(@RequestBody LoginRequest loginRequest) {
         try {
             accountControllerLogger.info("Login attempt | {}.", loginRequest.toString());
-            accountService.loginUser(loginRequest);
-            return ResponseEntity.status(HttpStatus.OK).body("Login successful.");
+            Account account = accountService.loginUser(loginRequest);
+            LoginResponse loginResponse = new LoginResponse(account.getId(), account.getUsername(), account.getEmail());
+            return ResponseEntity.status(HttpStatus.OK).body(loginResponse);
 
         } catch (IncorrectUsernameOrEmailAddressException e) {
             accountControllerLogger.error("Unsuccessful login due to incorrect username or email address.");
