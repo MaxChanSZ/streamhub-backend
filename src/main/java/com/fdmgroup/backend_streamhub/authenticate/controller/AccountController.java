@@ -65,6 +65,7 @@ public class AccountController {
             accountControllerLogger.info("Login attempt | {}.", loginRequest.toString());
             Account account = accountService.loginUser(loginRequest);
             LoginResponse loginResponse = new LoginResponse(account.getId(), account.getUsername(), account.getEmail());
+            accountControllerLogger.info("Successful login | {}", loginResponse.toString());
             return ResponseEntity.status(HttpStatus.OK).body(loginResponse);
 
         } catch (IncorrectUsernameOrEmailAddressException e) {

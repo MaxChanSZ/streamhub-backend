@@ -13,4 +13,13 @@ public class LoginResponse {
     private String username;
     private String email;
 
+    @Override
+    public String toString() {
+        return "LoginResponse{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", email='" + email + '\'' +
+                '}';
+    }
+
 }
