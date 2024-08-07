@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<link rel="stylesheet" type="text/css" href="/css/registration.css">
+<head>
+    <meta charset="UTF-8">
+    <title>StreamHub</title>
+</head>
+<body>
+<div class="box">
+    <a th:href="@{/}" class="back-link">&#8592; Back</a>
+    <h1>Registration</h1>
+
+    <!-- Registration requirements -->
+    <div class="requirements">
+        <h3>Requirements:</h3>
+        <ul>
+            <li><strong>Username:</strong></li>
+            <ul>
+                <li>A word consists of at least 5 characters.</li>
+            </ul>
+            <li><strong>Email Address:</strong></li>
+            <ul>
+                <li>A valid email address.</li>
+            </ul>
+            <li><strong>Password:</strong></li>
+            <ul>
+                <li>At least 8 characters.</li>
+                <li>At least 1 uppercase letter.</li>
+                <li>At least 1 number.</li>
+                <li>At least 1 special character.</li>
+            </ul>
+        </ul>
+    </div>
+
+    <div th:if="${error}" class="error-message">
+        <p th:text="${error}"></p>
+    </div>
+
+    <form th:action="@{/registration}" method="post">
+        <div>
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" placeholder="Username" required>
+        </div>
+        <div>
+            <label for="email">Email Address:</label>
+            <input type="email" id="email" name="email" placeholder="Email Address" required>
+        </div>
+        <div>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" placeholder="Password" required>
+        </div>
+        <button type="submit" class="registration-button">Register</button>
+    </form>
+</div>
+</body>
+</html>
