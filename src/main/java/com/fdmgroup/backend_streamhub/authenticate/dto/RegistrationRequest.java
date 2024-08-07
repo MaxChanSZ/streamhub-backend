@@ -1,6 +1,5 @@
 package com.fdmgroup.backend_streamhub.authenticate.dto;
 
-import com.fdmgroup.backend_streamhub.authenticate.model.Account;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,6 +7,19 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-public class RegistrationRequest extends Account {
+public class RegistrationRequest {
+
+    private String username;
+    private String email;
+    private String password;
+
+    @Override
+    public String toString() {
+        return "RegistrationRequest{" +
+                "username='" + username + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                '}';
+    }
 
 }

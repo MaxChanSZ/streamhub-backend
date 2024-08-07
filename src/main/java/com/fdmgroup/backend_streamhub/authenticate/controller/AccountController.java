@@ -66,18 +66,18 @@ public class AccountController {
         String username = registrationRequest.getUsername();
         String email = registrationRequest.getEmail();
         try {
-            accountControllerLogger.info("Registration attempt | {}", registrationRequest.toString());
+            accountControllerLogger.info("Registration attempt | {}.", registrationRequest.toString());
             Account account = accountService.registerUser(registrationRequest);
             RegistrationResponse registrationResponse = new RegistrationResponse(account.getId(), account.getUsername(), account.getEmail());
-            accountControllerLogger.info("Successful registration | {}", registrationResponse.toString());
+            accountControllerLogger.info("Successful registration | {}.", registrationResponse.toString());
             return ResponseEntity.status(HttpStatus.CREATED).body(registrationResponse);
 
         } catch (InvalidUsernameException e) {
-            accountControllerLogger.error("Unsuccessful registration attempt due to invalid username. Username: {}", username);
+            accountControllerLogger.error("Unsuccessful registration attempt due to invalid username. Username: {}.", username);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid username entered.");
 
         } catch (InvalidEmailAddressException e) {
-            accountControllerLogger.error("Unsuccessful registration attempt due to invalid email address. Email address: {}", email);
+            accountControllerLogger.error("Unsuccessful registration attempt due to invalid email address. Email address: {}.", email);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid email address entered.");
 
         } catch (InvalidPasswordException e) {
@@ -108,7 +108,7 @@ public class AccountController {
             accountControllerLogger.info("Login attempt | {}.", loginRequest.toString());
             Account account = accountService.loginUser(loginRequest);
             LoginResponse loginResponse = new LoginResponse(account.getId(), account.getUsername());
-            accountControllerLogger.info("Successful login | {}", loginResponse.toString());
+            accountControllerLogger.info("Successful login | {}.", loginResponse.toString());
             return ResponseEntity.status(HttpStatus.OK).body(loginResponse);
 
         } catch (UsernameNotFoundException e) {
