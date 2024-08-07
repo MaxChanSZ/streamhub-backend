@@ -113,7 +113,7 @@ public class AccountController {
 
         } catch (UsernameNotFoundException e) {
             accountControllerLogger.error("Unsuccessful login as username entered not found. Username: {}", loginRequest.getUsername());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username entered cannot be found.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Username entered cannot be found.");
 
         } catch (IncorrectPasswordException e) {
             accountControllerLogger.error("Unsuccessful login due to incorrect password.");
