@@ -26,7 +26,7 @@ public class AccountService {
 
     public Account loginUser(LoginRequest loginRequest) throws  UsernameNotFoundException,
                                                                 IncorrectPasswordException {
-        accountServiceLogger.info("Login attempt | {}.", loginRequest.toString());
+        accountServiceLogger.info("Login attempt | {}", loginRequest.toString());
 
         // Retrieve an account by username.
         Optional<Account> accountOptional = accountRepository.findByUsername(loginRequest.getUsername());
@@ -44,7 +44,7 @@ public class AccountService {
            accountServiceLogger.error("Unsuccessful login due to incorrect password.");
            throw new IncorrectPasswordException();
        }
-       accountServiceLogger.info("Successful login | {}.", loginRequest.toString());
+       accountServiceLogger.info("Successful login | {}", loginRequest.toString());
        return account;
     }
 
