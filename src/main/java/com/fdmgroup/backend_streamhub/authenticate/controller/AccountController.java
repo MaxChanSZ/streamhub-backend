@@ -2,8 +2,9 @@ package com.fdmgroup.backend_streamhub.authenticate.controller;
 
 import com.fdmgroup.backend_streamhub.authenticate.dto.LoginRequest;
 import com.fdmgroup.backend_streamhub.authenticate.dto.LoginResponse;
-import com.fdmgroup.backend_streamhub.authenticate.exceptions.IncorrectPasswordException;
-import com.fdmgroup.backend_streamhub.authenticate.exceptions.UsernameNotFoundException;
+import com.fdmgroup.backend_streamhub.authenticate.dto.RegistrationRequest;
+import com.fdmgroup.backend_streamhub.authenticate.dto.RegistrationResponse;
+import com.fdmgroup.backend_streamhub.authenticate.exceptions.*;
 import com.fdmgroup.backend_streamhub.authenticate.model.Account;
 import com.fdmgroup.backend_streamhub.authenticate.ApiIndex.ApiResponse;
 import com.fdmgroup.backend_streamhub.authenticate.ApiIndex.ApiResponseAccount;
@@ -16,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping("/account")
 public class AccountController {
 
     private static final Logger accountControllerLogger = LogManager.getLogger(AccountController.class);
@@ -23,12 +25,12 @@ public class AccountController {
     @Autowired
     private AccountService accountService;
 
-    @GetMapping("/account/testing")
+    @GetMapping("/testing")
     public ResponseEntity<String> accTesting() {
         return new ResponseEntity<>("hello world", HttpStatus.OK);
     }
 
-    @GetMapping("/account/api")
+    @GetMapping("/api")
     public ApiResponse apiHomeController(){
         ApiResponse response = new ApiResponse();
         response.setMessage("API Test Success");
@@ -36,7 +38,7 @@ public class AccountController {
         return response;
     }
 
-    @PostMapping("/account/api/accounttest")
+    @PostMapping("/api/accounttest")
     public ApiResponseAccount AccountUpdateTest(@RequestBody Account inputAccount) {
         //Future TODO: to transition this into an account updating API. When this is called, it should take in an 'account' input and return an account + status code & message to let caller know account has been updated (or has failed)
         // Note: It should have verification logic. Will use accountService to do account creation/update, then update and return response accordingly.
@@ -59,17 +61,58 @@ public class AccountController {
         return response;
     }
 
-    @PostMapping("/account/login/submit")
+    @PostMapping("/registration/submit")
+    public ResponseEntity<?> registrationAttempt(@RequestBody RegistrationRequest registrationRequest) {
+        String username = registrationRequest.getUsername();
+        String email = registrationRequest.getEmail();
+        try {
+            accountControllerLogger.info("Registration attempt | {}", registrationRequest.toString());
+            Account account = accountService.registerUser(registrationRequest);
+            RegistrationResponse registrationResponse = new RegistrationResponse(account.getId(), account.getUsername(), account.getEmail());
+            accountControllerLogger.info("Successful registration | JSON returned: {}", registrationResponse.toString());
+            return ResponseEntity.status(HttpStatus.CREATED).body(registrationResponse);
+
+        } catch (InvalidUsernameException e) {
+            accountControllerLogger.error("Unsuccessful registration attempt due to invalid username. Username: {}", username);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid username entered.");
+
+        } catch (InvalidEmailAddressException e) {
+            accountControllerLogger.error("Unsuccessful registration attempt due to invalid email address. Email address: {}", email);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid email address entered.");
+
+        } catch (InvalidPasswordException e) {
+            accountControllerLogger.error("Unsuccessful registration attempt due to invalid password.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid password entered.");
+
+        } catch (UnavailableEmailAddressException e) {
+            accountControllerLogger.error("Unsuccessful registration attempt as email address has been registered to another user. Email address: {}", email);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email address entered is unavailable.");
+
+        } catch (UnavailablePasswordException e) {
+            accountControllerLogger.error("Unsuccessful registration attempt as password has been registered to another user.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Password entered is unavailable.");
+
+        } catch (UnavailableUsernameException e) {
+            accountControllerLogger.error("Unsuccessful registration attempt as username has been registered to another user. Username: {}", username);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username entered is unavailable.");
+
+        } catch (Exception e) {
+            accountControllerLogger.fatal("Unsuccessful registration attempt due to invalid an unexpected error.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unexpected error occurred.");
+        }
+    }
+
+    @PostMapping("/login/submit")
     public ResponseEntity<?> loginAttempt(@RequestBody LoginRequest loginRequest) {
         try {
-            accountControllerLogger.info("Login attempt | {}.", loginRequest.toString());
+            accountControllerLogger.info("Login attempt | {}", loginRequest.toString());
             Account account = accountService.loginUser(loginRequest);
             LoginResponse loginResponse = new LoginResponse(account.getId(), account.getUsername());
             accountControllerLogger.info("Successful login | {}", loginResponse.toString());
             return ResponseEntity.status(HttpStatus.OK).body(loginResponse);
 
         } catch (UsernameNotFoundException e) {
-            accountControllerLogger.error("Unsuccessful login as username entered not found.");
+            accountControllerLogger.error("Unsuccessful login as username entered not found. Username: {}", loginRequest.getUsername());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username entered cannot be found.");
 
         } catch (IncorrectPasswordException e) {
@@ -77,7 +120,7 @@ public class AccountController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Incorrect password entered.");
 
         } catch (Exception e) {
-            accountControllerLogger.fatal("Unsuccessful registration attempt due to invalid an unexpected error.");
+            accountControllerLogger.fatal("Unsuccessful login attempt due to invalid an unexpected error.");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unexpected error occurred.");
         }
     }
