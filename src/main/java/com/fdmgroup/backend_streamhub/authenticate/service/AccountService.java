@@ -1,56 +1,91 @@
-/**
- * Service class that handles registration-related operations.
- */
-
 package com.fdmgroup.backend_streamhub.authenticate.service;
 
+
+import com.fdmgroup.backend_streamhub.authenticate.model.Account;
+import com.fdmgroup.backend_streamhub.authenticate.repository.AccountRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import com.fdmgroup.backend_streamhub.authenticate.dto.LoginRequest;
+import com.fdmgroup.backend_streamhub.authenticate.dto.RegistrationRequest;
 import com.fdmgroup.backend_streamhub.authenticate.exceptions.*;
 import com.fdmgroup.backend_streamhub.authenticate.model.Account;
 import com.fdmgroup.backend_streamhub.authenticate.repository.AccountRepository;
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
-public class RegistrationService {
+public class AccountService {
 
-    /**
-     * Logger to monitor operational flow and facilitate troubleshooting.
-     */
-    private static final Logger registrationServiceLogger = LogManager.getLogger(RegistrationService.class);
+    private static final Logger accountServiceLogger = LogManager.getLogger(AccountService.class);
 
-    /**
-     * Repository for account operations.
-     */
     @Autowired
-    private final AccountRepository accountRepository;
+    private AccountRepository accountRepository;
 
-    /**
-     * Constructs a {@code RegistrationService} with the specified {@link AccountRepository}.
-     * @param accountRepository the {@link AccountRepository} to be used by the {@link RegistrationService}.
-     */
-    @Autowired
-    public RegistrationService(AccountRepository accountRepository) {
+
+    public AccountService(AccountRepository accountRepository) {
         this.accountRepository = accountRepository;
     }
 
-    /**
-     * Registers the User.
-     *
-     * @param username     The username entered during registration.
-     * @param email        The email address entered during registration.
-     * @param password     The password entered during registration.
-     * @throws InvalidUsernameException Exception thrown for invalid username.
-     */
-    public void registerUser(String username, String email, String password) throws InvalidUsernameException,
+
+    public Account updateAccount(Account accountToUpdate) {
+        return accountRepository.findById(accountToUpdate.getId())
+                .map(existingAccount -> {
+                    existingAccount.setUsername(accountToUpdate.getUsername());
+                    existingAccount.setEmail(accountToUpdate.getEmail());
+                    existingAccount.setPassword(accountToUpdate.getPassword());
+                    return accountRepository.save(existingAccount);
+                })
+                .orElse(null); // Account not found
+    }
+
+    public boolean deleteAccount(long accountId) {
+        return accountRepository.findById(accountId)
+                .map(account -> {
+                    accountRepository.delete(account);
+                    return true; // Account deleted successfully
+                })
+                .orElse(false); // Account not found
+    }
+
+    public Account loginUser(LoginRequest loginRequest) throws  UsernameNotFoundException,
+                                                                IncorrectPasswordException {
+        accountServiceLogger.info("Login attempt | {}", loginRequest.toString());
+
+        // Retrieve an account by username.
+        Optional<Account> accountOptional = accountRepository.findByUsername(loginRequest.getUsername());
+
+       // Unsuccessful login due to incorrect username.
+       if (accountOptional.isEmpty()) {
+           accountServiceLogger.error("Unsuccessful login as username entered not found.");
+           throw new UsernameNotFoundException();
+       }
+
+       Account account = accountOptional.get();
+
+       // Unsuccessful login due to incorrect password.
+       if (!account.getPassword().equals(loginRequest.getPassword())) {
+           accountServiceLogger.error("Unsuccessful login due to incorrect password.");
+           throw new IncorrectPasswordException();
+       }
+       accountServiceLogger.info("Successful login | {}", loginRequest.toString());
+       return account;
+    }
+
+    public Account registerUser(RegistrationRequest registrationRequest) throws     InvalidUsernameException,
                                                                                     InvalidEmailAddressException,
                                                                                     InvalidPasswordException,
                                                                                     UnavailableUsernameException,
                                                                                     UnavailableEmailAddressException,
                                                                                     UnavailablePasswordException {
-        registrationServiceLogger.info("Registration attempt | Username: {}, Email Address: {}",
-                                        username, email);
+        accountServiceLogger.info("Registration attempt | {}", registrationRequest.toString());
+
+        String username = registrationRequest.getUsername();
+        String email = registrationRequest.getEmail();
+        String password = registrationRequest.getPassword();
 
         if (!isValidUsername(username)) {
             throw new InvalidUsernameException();
@@ -78,48 +113,22 @@ public class RegistrationService {
 
         Account account = new Account(username, email, password);
         accountRepository.save(account);
-        if (accountRepository.findByUsername(username).isPresent()) {
-            Account registeredAccount = accountRepository.findByUsername(username).get();
-            registrationServiceLogger.info("Successful registration | {}", registeredAccount.toString());
-        }
+        accountServiceLogger.info("Successful registration | {}", account.toString());
+        return account;
     }
 
-    /**
-     * Checks if an email address is available for registration.
-     *
-     * @param email The email address to check.
-     * @return True if the email address has not been registered with any User entity, false otherwise.
-     */
     private boolean isEmailAddressAvailable(String email) {
         return accountRepository.findByEmail(email).isEmpty();
     }
 
-    /**
-     * Checks if a password is available for registration.
-     *
-     * @param password The password to check.
-     * @return True if the password has not been registered with any User entity, false otherwise.
-     */
     private boolean isPasswordAvailable(String password) {
         return accountRepository.findByPassword(password).isEmpty();
     }
 
-    /**
-     * Checks if a username is available for registration.
-     *
-     * @param username The username to check.
-     * @return True if the username has not been registered with any User entity, false otherwise.
-     */
     private boolean isUsernameAvailable(String username) {
         return accountRepository.findByUsername(username).isEmpty();
     }
 
-    /**
-     * Checks that a password is valid.
-     *
-     * @param password The password entered during registration.
-     * @return True for valid password, false otherwise.
-     */
     private boolean isValidPassword(String password) {
         if (password.length() < 8) {
             return false;
@@ -144,12 +153,6 @@ public class RegistrationService {
         return numberOfUppercaseLetters >= 1 && numberOfNumbers >=1 && numberOfSpecialCharacters >= 1;
     }
 
-    /**
-     * Checks that an email address is valid.
-     *
-     * @param email The email address entered during registration.
-     * @return True for valid email address, false otherwise.
-     */
     private boolean isValidEmailAddress(String email) {
         if (email == null) {
             return false;
@@ -159,12 +162,6 @@ public class RegistrationService {
         return trimmedEmail.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
     }
 
-    /**
-     * Checks that a username is valid
-     *
-     * @param   username The username entered during registration.
-     * @return  True if the username consists of only one word and has at least 5 characters, false otherwise.
-     */
     private boolean isValidUsername(String username) {
         String[] word = username.split(" ");
         if (word.length != 1) {
@@ -178,5 +175,4 @@ public class RegistrationService {
 
         return numberOfCharacters >= 5;
     }
-
 }
