@@ -20,10 +20,16 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/account")
 public class AccountController {
 
-    private static final Logger accountControllerLogger = LogManager.getLogger(AccountController.class);
+    private final AccountService accountService;
 
     @Autowired
-    private AccountService accountService;
+    public AccountController(AccountService accountService) {
+        this.accountService = accountService;
+    }
+
+
+    private static final Logger accountControllerLogger = LogManager.getLogger(AccountController.class);
+
 
     @GetMapping("/testing")
     public ResponseEntity<String> accTesting() {
@@ -57,6 +63,43 @@ public class AccountController {
 //        response.setAccount = mockAccount;
 //        response.setMessage("Account function failed");
 //        response.setStatusCode(/*"UPDATE THIS BASED ON ERROR. EG - 404 BAD REQUEST / 401 UNAUTHORIZED"*/);
+
+        return response;
+    }
+
+    @PutMapping("/account/api/update")
+    public ApiResponseAccount AccountUpdate(@RequestBody Account inputAccount) {
+        // TO ADD: Account creation/update logic.
+        Account updatedAccount = accountService.updateAccount(inputAccount);
+
+        ApiResponseAccount response = new ApiResponseAccount();
+
+        if (updatedAccount != null) {
+            response.setAccount(updatedAccount);
+            response.setMessage("Account update completed");
+            response.setStatusCode("200 OK");
+
+        } else {
+            response.setAccount(null);
+            response.setMessage("Account update failed");
+            response.setStatusCode(String.valueOf(HttpStatus.BAD_REQUEST.value()));
+        }
+
+        return response;
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ApiResponseAccount deleteAccount(@PathVariable("id") long accountId) {
+        ApiResponseAccount response = new ApiResponseAccount();
+        boolean deletionStatus = accountService.deleteAccount(accountId);
+
+        if (deletionStatus) {
+            response.setMessage("Account deleted successfully");
+            response.setStatusCode(String.valueOf(HttpStatus.OK.value()));
+        } else {
+            response.setMessage("Account not found or delete operation failed");
+            response.setStatusCode(String.valueOf(HttpStatus.NOT_FOUND.value()));
+        }
 
         return response;
     }

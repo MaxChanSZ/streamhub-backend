@@ -1,5 +1,10 @@
 package com.fdmgroup.backend_streamhub.authenticate.service;
 
+
+import com.fdmgroup.backend_streamhub.authenticate.model.Account;
+import com.fdmgroup.backend_streamhub.authenticate.repository.AccountRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import com.fdmgroup.backend_streamhub.authenticate.dto.LoginRequest;
 import com.fdmgroup.backend_streamhub.authenticate.dto.RegistrationRequest;
 import com.fdmgroup.backend_streamhub.authenticate.exceptions.*;
@@ -20,8 +25,30 @@ public class AccountService {
     @Autowired
     private AccountRepository accountRepository;
 
+
     public AccountService(AccountRepository accountRepository) {
         this.accountRepository = accountRepository;
+    }
+
+
+    public Account updateAccount(Account accountToUpdate) {
+        return accountRepository.findById(accountToUpdate.getId())
+                .map(existingAccount -> {
+                    existingAccount.setUsername(accountToUpdate.getUsername());
+                    existingAccount.setEmail(accountToUpdate.getEmail());
+                    existingAccount.setPassword(accountToUpdate.getPassword());
+                    return accountRepository.save(existingAccount);
+                })
+                .orElse(null); // Account not found
+    }
+
+    public boolean deleteAccount(long accountId) {
+        return accountRepository.findById(accountId)
+                .map(account -> {
+                    accountRepository.delete(account);
+                    return true; // Account deleted successfully
+                })
+                .orElse(false); // Account not found
     }
 
     public Account loginUser(LoginRequest loginRequest) throws  UsernameNotFoundException,
@@ -148,5 +175,4 @@ public class AccountService {
 
         return numberOfCharacters >= 5;
     }
-
 }
