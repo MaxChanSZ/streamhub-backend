@@ -16,7 +16,7 @@ import java.util.Optional;
 public class SeriesController {
 
     private final String VIDEO_BASE_URL = "http://localhost:8080/encoded/";
-    private final String THUMBNAIL_BASE_URL = "http://localhost:8080/thumbnail/";
+    private final String THUMBNAIL_BASE_URL = "http://localhost:8080/thumbnails/";
 
     @Autowired
     SeriesService seriesService;

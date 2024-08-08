@@ -16,7 +16,7 @@ public class VideoController {
     // information for a single video when a request is received from the frontend
 
     private final String VIDEO_BASE_URL = "http://localhost:8080/encoded/";
-    private final String THUMBNAIL_BASE_URL = "http://localhost:8080/thumbnail/";
+    private final String THUMBNAIL_BASE_URL = "http://localhost:8080/thumbnails/";
 
     @Autowired
     VideoService videoService;
