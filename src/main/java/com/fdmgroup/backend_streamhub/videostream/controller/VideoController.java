@@ -15,7 +15,9 @@ public class VideoController {
     //TODO: add methods to return a list of videos, as well as return the necessary
     // information for a single video when a request is received from the frontend
 
-    private final String VIDEO_BASE_URL = "http://localhost:8080/";
+    private final String VIDEO_BASE_URL = "http://localhost:8080/encoded/";
+    private final String THUMBNAIL_BASE_URL = "http://localhost:8080/thumbnail/";
+
     @Autowired
     VideoService videoService;
 
@@ -34,6 +36,7 @@ public class VideoController {
         } else {
             Video video = videoOptional.get();
             video.setVideoURL(VIDEO_BASE_URL + video.getVideoURL());
+            video.setThumbnailURL(THUMBNAIL_BASE_URL + video.getThumbnailURL());
             return  ResponseEntity.ok(video);
         }
     }

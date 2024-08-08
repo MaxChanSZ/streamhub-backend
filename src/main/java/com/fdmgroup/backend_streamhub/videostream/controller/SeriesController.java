@@ -15,6 +15,9 @@ import java.util.Optional;
 @RequestMapping("/api/series")
 public class SeriesController {
 
+    private final String VIDEO_BASE_URL = "http://localhost:8080/encoded/";
+    private final String THUMBNAIL_BASE_URL = "http://localhost:8080/thumbnail/";
+
     @Autowired
     SeriesService seriesService;
 
@@ -31,6 +34,7 @@ public class SeriesController {
         } else {
             seriesList = seriesService.findSeriesByTitle(title);
         }
+        seriesList.forEach(series -> series.setThumbnailURL( THUMBNAIL_BASE_URL + series.getThumbnailURL() ));
         return ResponseEntity.ok(seriesList);
     }
 
@@ -45,6 +49,7 @@ public class SeriesController {
         }
 
         List<Video> videoList = videoService.findAllVideosInSeries(series.get());
+        videoList.forEach( video -> video.setThumbnailURL( THUMBNAIL_BASE_URL + video.getThumbnailURL() ));
 
         return ResponseEntity.ok(videoList);
     }
