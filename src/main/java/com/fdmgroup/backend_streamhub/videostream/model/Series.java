@@ -1,5 +1,6 @@
 package com.fdmgroup.backend_streamhub.videostream.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -28,6 +29,7 @@ public class Series {
     private String cast;
 
     @OneToMany(mappedBy = "series")
+    @JsonIgnore
     private List<Video> videos = new ArrayList<>();
 
     public void addVideos(Video video) {

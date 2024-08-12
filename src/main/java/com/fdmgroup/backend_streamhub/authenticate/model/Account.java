@@ -1,3 +1,7 @@
+/**
+ * Entity class for a registered user.
+ */
+
 package com.fdmgroup.backend_streamhub.authenticate.model;
 
 import jakarta.persistence.Entity;
@@ -21,20 +25,34 @@ import java.util.List;
 @Setter
 public class Account implements UserDetails {
 
+    /**
+     * The identification number of an Account entity.
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    /**
+     * The username of an Account entity.
+     */
     private String username;
+
+    /**
+     * The password of an Account entity.
+     */
     private String password;
+
+    /**
+     * The email address of an Account entity.
+     */
     private String email;
 
     /**
-     * Constructor for a Account entity.
+     * Constructor for an Account entity.
      *
-     * @param username  The username of a Account entity.
-     * @param email     The email address of a Account entity.
-     * @param password  The password of a Account entity.
+     * @param username  The username of an Account entity.
+     * @param email     The email address of an Account entity.
+     * @param password  The password of an Account entity.
      */
     public Account(String username, String email, String password) {
         this.username = username;
@@ -42,12 +60,16 @@ public class Account implements UserDetails {
         this.password = password;
     }
 
+    /**
+     * Returns a String representation of the {@code Account} entity.
+     *
+     * @return a String representation of the {@code Account} entity.
+     */
     @Override
     public String toString() {
         return "Account{" +
                 "id=" + id +
                 ", username='" + username + '\'' +
-                ", password='" + password + '\'' +
                 ", email='" + email + '\'' +
                 '}';
     }
