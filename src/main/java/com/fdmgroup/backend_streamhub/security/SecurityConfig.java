@@ -55,8 +55,8 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
-//                .authorizeHttpRequests(auth -> auth.requestMatchers("/**").permitAll().anyRequest().permitAll())    //uncomment this and comment the above line out if you want to bypass auth for testing.
+//                .authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
+                .authorizeHttpRequests(auth -> auth.requestMatchers("/**").permitAll().anyRequest().permitAll())    //uncomment this and comment the above line out if you want to bypass auth for testing.
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .httpBasic(withDefaults())
                 .oauth2ResourceServer((oauth2) -> oauth2.jwt(Customizer.withDefaults()))
