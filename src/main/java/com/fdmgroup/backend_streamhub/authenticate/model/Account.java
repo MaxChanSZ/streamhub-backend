@@ -79,16 +79,6 @@ public class Account implements UserDetails {
         return List.of();
     }
 
-    @Override
-    public String getPassword() {
-        return "accountPassword";
-    }
-
-    @Override
-    public String getUsername() {
-        return "accountUsername";
-    }
-
     //FYI the methods below return true.
     @Override
     public boolean isAccountNonExpired() {
