@@ -4,16 +4,13 @@ package com.fdmgroup.backend_streamhub.authenticate.service;
 import com.fdmgroup.backend_streamhub.authenticate.model.Account;
 import com.fdmgroup.backend_streamhub.authenticate.repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.fdmgroup.backend_streamhub.authenticate.dto.LoginRequest;
 import com.fdmgroup.backend_streamhub.authenticate.dto.RegistrationRequest;
 import com.fdmgroup.backend_streamhub.authenticate.exceptions.*;
-import com.fdmgroup.backend_streamhub.authenticate.model.Account;
-import com.fdmgroup.backend_streamhub.authenticate.repository.AccountRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
@@ -51,7 +48,7 @@ public class AccountService {
                 .orElse(false); // Account not found
     }
 
-    public Account loginUser(LoginRequest loginRequest) throws  UsernameNotFoundException,
+    public Account loginUser(LoginRequest loginRequest, BCryptPasswordEncoder encoder) throws  UsernameNotFoundException,
                                                                 IncorrectPasswordException {
         accountServiceLogger.info("Login attempt | {}", loginRequest.toString());
 
@@ -67,7 +64,7 @@ public class AccountService {
        Account account = accountOptional.get();
 
        // Unsuccessful login due to incorrect password.
-       if (!account.getPassword().equals(loginRequest.getPassword())) {
+       if (!encoder.matches(loginRequest.getPassword(),account.getPassword())) {
            accountServiceLogger.error("Unsuccessful login due to incorrect password.");
            throw new IncorrectPasswordException();
        }
