@@ -137,10 +137,6 @@ public class AccountController {
                 accountControllerLogger.error("Unsuccessful registration attempt as email address has been registered to another user. Email address: {}", email);
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email address entered is unavailable.");
 
-            } catch (UnavailablePasswordException e) {
-                accountControllerLogger.error("Unsuccessful registration attempt as password has been registered to another user.");
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Password entered is unavailable.");
-
             } catch (UnavailableUsernameException e) {
                 accountControllerLogger.error("Unsuccessful registration attempt as username has been registered to another user. Username: {}", username);
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username entered is unavailable.");

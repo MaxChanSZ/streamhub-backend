@@ -76,8 +76,7 @@ public class AccountService {
                                                                                     InvalidEmailAddressException,
                                                                                     InvalidPasswordException,
                                                                                     UnavailableUsernameException,
-                                                                                    UnavailableEmailAddressException,
-                                                                                    UnavailablePasswordException {
+                                                                                    UnavailableEmailAddressException {
         accountServiceLogger.info("Registration attempt | {}", registrationRequest.toString());
 
         String username = registrationRequest.getUsername();
@@ -104,10 +103,6 @@ public class AccountService {
             throw new UnavailableEmailAddressException();
         }
 
-        if (!isPasswordAvailable(password)) {
-            throw new UnavailablePasswordException();
-        }
-
         Account account = new Account(username, email, password);
         accountRepository.save(account);
         accountServiceLogger.info("Successful registration | {}", account.toString());
@@ -116,10 +111,6 @@ public class AccountService {
 
     private boolean isEmailAddressAvailable(String email) {
         return accountRepository.findByEmail(email).isEmpty();
-    }
-
-    private boolean isPasswordAvailable(String password) {
-        return accountRepository.findByPassword(password).isEmpty();
     }
 
     private boolean isUsernameAvailable(String username) {
