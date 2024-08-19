@@ -20,7 +20,7 @@ public class JobService {
 
     private static final Logger jobServiceLogger = LogManager.getLogger(JobService.class);
 
-    public void executeInitJobs() throws InvalidEmailAddressException, UnavailableEmailAddressException, InvalidPasswordException, InvalidUsernameException, UnavailableUsernameException, UnavailablePasswordException {
+    public void executeInitJobs() throws InvalidEmailAddressException, UnavailableEmailAddressException, InvalidPasswordException, InvalidUsernameException, UnavailableUsernameException {
         jobServiceLogger.info("Starting initialization for mock users...");
         RegistrationRequest user1 = new RegistrationRequest("John.lim","john.lim@yahoo.com","O3!afa4aafa");
         RegistrationRequest user2 = new RegistrationRequest("MockUser","User@gmail.com","Password123.");
