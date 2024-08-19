@@ -4,16 +4,13 @@ package com.fdmgroup.backend_streamhub.authenticate.service;
 import com.fdmgroup.backend_streamhub.authenticate.model.Account;
 import com.fdmgroup.backend_streamhub.authenticate.repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.fdmgroup.backend_streamhub.authenticate.dto.LoginRequest;
 import com.fdmgroup.backend_streamhub.authenticate.dto.RegistrationRequest;
 import com.fdmgroup.backend_streamhub.authenticate.exceptions.*;
-import com.fdmgroup.backend_streamhub.authenticate.model.Account;
-import com.fdmgroup.backend_streamhub.authenticate.repository.AccountRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
@@ -24,9 +21,10 @@ public class AccountService {
 
     @Autowired
     private AccountRepository accountRepository;
+    private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(16);
 
 
-    public AccountService(AccountRepository accountRepository) {
+    public AccountService() {
         this.accountRepository = accountRepository;
     }
 
@@ -67,9 +65,7 @@ public class AccountService {
        Account account = accountOptional.get();
 
        // Unsuccessful login due to incorrect password.
-
        if (!encoder.matches(loginRequest.getPassword(), account.getPassword())) {
-
            accountServiceLogger.error("Unsuccessful login due to incorrect password.");
            throw new IncorrectPasswordException();
        }
@@ -77,17 +73,17 @@ public class AccountService {
        return account;
     }
 
+
     public Account registerUser(RegistrationRequest registrationRequest) throws     InvalidUsernameException,
                                                                                     InvalidEmailAddressException,
                                                                                     InvalidPasswordException,
                                                                                     UnavailableUsernameException,
-                                                                                    UnavailableEmailAddressException,
-                                                                                    UnavailablePasswordException {
+                                                                                    UnavailableEmailAddressException {
         accountServiceLogger.info("Registration attempt | {}", registrationRequest.toString());
 
         String username = registrationRequest.getUsername();
         String email = registrationRequest.getEmail();
-        String password = registrationRequest.getPassword();
+        String password = encoder.encode(registrationRequest.getPassword());
 
         if (!isValidUsername(username)) {
             throw new InvalidUsernameException();
@@ -109,22 +105,28 @@ public class AccountService {
             throw new UnavailableEmailAddressException();
         }
 
-        if (!isPasswordAvailable(password)) {
-            throw new UnavailablePasswordException();
-        }
-
         Account account = new Account(username, email, password);
         accountRepository.save(account);
         accountServiceLogger.info("Successful registration | {}", account.toString());
         return account;
     }
 
-    private boolean isEmailAddressAvailable(String email) {
-        return accountRepository.findByEmail(email).isEmpty();
+    //ping user checks that a user exists and returns the user, or null if user does not exist.
+    public Account pingUser(RegistrationRequest registrationRequest) {
+        accountServiceLogger.info("Pinging user | {}", registrationRequest.toString());
+
+        Optional<Account> accountOptional = accountRepository.findByUsername(registrationRequest.getUsername());
+
+        if (accountOptional.isPresent()) {
+            accountServiceLogger.info("User {} found.", registrationRequest.getUsername());
+            return accountOptional.get();
+        }
+        accountServiceLogger.info("User {} not found.", registrationRequest.getUsername());
+        return null;
     }
 
-    private boolean isPasswordAvailable(String password) {
-        return accountRepository.findByPassword(password).isEmpty();
+    private boolean isEmailAddressAvailable(String email) {
+        return accountRepository.findByEmail(email).isEmpty();
     }
 
     private boolean isUsernameAvailable(String username) {

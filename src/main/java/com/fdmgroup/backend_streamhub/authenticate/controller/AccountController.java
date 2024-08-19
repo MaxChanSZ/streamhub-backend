@@ -31,7 +31,6 @@ public class AccountController {
 
     private static final Logger accountControllerLogger = LogManager.getLogger(AccountController.class);
 
-
     @GetMapping("/testing")
     public ResponseEntity<String> accTesting() {
         return new ResponseEntity<>("hello world", HttpStatus.OK);
@@ -109,41 +108,39 @@ public class AccountController {
     public ResponseEntity<?> registrationAttempt(@RequestBody RegistrationRequest registrationRequest) {
         String username = registrationRequest.getUsername();
         String email = registrationRequest.getEmail();
-        try {
-            accountControllerLogger.info("Registration attempt | {}", registrationRequest.toString());
-            Account account = accountService.registerUser(registrationRequest);
-            RegistrationResponse registrationResponse = new RegistrationResponse(account.getId(), account.getUsername(), account.getEmail());
-            accountControllerLogger.info("Successful registration | JSON returned: {}", registrationResponse.toString());
-            return ResponseEntity.status(HttpStatus.CREATED).body(registrationResponse);
+        String password = registrationRequest.getPassword();
 
-        } catch (InvalidUsernameException e) {
-            accountControllerLogger.error("Unsuccessful registration attempt due to invalid username. Username: {}", username);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid username entered.");
+            try {
+                accountControllerLogger.info("Registration attempt | {}", registrationRequest.toString());
+                Account account = accountService.registerUser(registrationRequest);
+                RegistrationResponse registrationResponse = new RegistrationResponse(account.getId(), account.getUsername(), account.getEmail());
+                accountControllerLogger.info("Successful registration | JSON returned: {}", registrationResponse.toString());
+                return ResponseEntity.status(HttpStatus.CREATED).body(registrationResponse);
 
-        } catch (InvalidEmailAddressException e) {
-            accountControllerLogger.error("Unsuccessful registration attempt due to invalid email address. Email address: {}", email);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid email address entered.");
+            } catch (InvalidUsernameException e) {
+                accountControllerLogger.error("Unsuccessful registration attempt due to invalid username. Username: {}", username);
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid username entered.");
 
-        } catch (InvalidPasswordException e) {
-            accountControllerLogger.error("Unsuccessful registration attempt due to invalid password.");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid password entered.");
+            } catch (InvalidEmailAddressException e) {
+                accountControllerLogger.error("Unsuccessful registration attempt due to invalid email address. Email address: {}", email);
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid email address entered.");
 
-        } catch (UnavailableEmailAddressException e) {
-            accountControllerLogger.error("Unsuccessful registration attempt as email address has been registered to another user. Email address: {}", email);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email address entered is unavailable.");
+            } catch (InvalidPasswordException e) {
+                accountControllerLogger.error("Unsuccessful registration attempt due to invalid password.");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid password entered.");
 
-        } catch (UnavailablePasswordException e) {
-            accountControllerLogger.error("Unsuccessful registration attempt as password has been registered to another user.");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Password entered is unavailable.");
+            } catch (UnavailableEmailAddressException e) {
+                accountControllerLogger.error("Unsuccessful registration attempt as email address has been registered to another user. Email address: {}", email);
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email address entered is unavailable.");
 
-        } catch (UnavailableUsernameException e) {
-            accountControllerLogger.error("Unsuccessful registration attempt as username has been registered to another user. Username: {}", username);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username entered is unavailable.");
+            } catch (UnavailableUsernameException e) {
+                accountControllerLogger.error("Unsuccessful registration attempt as username has been registered to another user. Username: {}", username);
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username entered is unavailable.");
 
-        } catch (Exception e) {
-            accountControllerLogger.fatal("Unsuccessful registration attempt due to invalid an unexpected error.");
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unexpected error occurred.");
-        }
+            } catch (Exception e) {
+                accountControllerLogger.fatal("Unsuccessful registration attempt due to invalid an unexpected error.");
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unexpected error occurred.");
+            }
     }
 
     @PostMapping("/login/submit")

@@ -1,5 +1,6 @@
 package com.fdmgroup.backend_streamhub.videostream.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -28,6 +29,7 @@ public class Video {
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "series_id")
+    @JsonIgnore
     private Series series;
 
 }
