@@ -67,7 +67,9 @@ public class AccountService {
        Account account = accountOptional.get();
 
        // Unsuccessful login due to incorrect password.
-       if (!account.getPassword().equals(loginRequest.getPassword())) {
+
+       if (!encoder.matches(loginRequest.getPassword(), account.getPassword())) {
+
            accountServiceLogger.error("Unsuccessful login due to incorrect password.");
            throw new IncorrectPasswordException();
        }
