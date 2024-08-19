@@ -14,7 +14,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -30,7 +29,6 @@ public class AccountController {
 
 
     private static final Logger accountControllerLogger = LogManager.getLogger(AccountController.class);
-    private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(16);
 
     @GetMapping("/testing")
     public ResponseEntity<String> accTesting() {
@@ -109,14 +107,11 @@ public class AccountController {
     public ResponseEntity<?> registrationAttempt(@RequestBody RegistrationRequest registrationRequest) {
         String username = registrationRequest.getUsername();
         String email = registrationRequest.getEmail();
+        String password = registrationRequest.getPassword();
 
-        String encodedPassword = encoder.encode(registrationRequest.getPassword());
-
-        if (encoder.matches(registrationRequest.getPassword(),encodedPassword)){
-            RegistrationRequest regRequestWithEncodedPassword = new RegistrationRequest(registrationRequest.getUsername(), registrationRequest.getEmail(), encodedPassword);
             try {
                 accountControllerLogger.info("Registration attempt | {}", registrationRequest.toString());
-                Account account = accountService.registerUser(regRequestWithEncodedPassword);
+                Account account = accountService.registerUser(registrationRequest);
                 RegistrationResponse registrationResponse = new RegistrationResponse(account.getId(), account.getUsername(), account.getEmail());
                 accountControllerLogger.info("Successful registration | JSON returned: {}", registrationResponse.toString());
                 return ResponseEntity.status(HttpStatus.CREATED).body(registrationResponse);
@@ -145,16 +140,13 @@ public class AccountController {
                 accountControllerLogger.fatal("Unsuccessful registration attempt due to invalid an unexpected error.");
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unexpected error occurred.");
             }
-        }
-        accountControllerLogger.fatal("Password and Encrypted passwords do not match. Please check password encryption.");
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Something went wrong, please contact support team.");
     }
 
     @PostMapping("/login/submit")
     public ResponseEntity<?> loginAttempt(@RequestBody LoginRequest loginRequest) {
         try {
             accountControllerLogger.info("Login attempt | {}", loginRequest.toString());
-            Account account = accountService.loginUser(loginRequest,encoder);
+            Account account = accountService.loginUser(loginRequest);
             LoginResponse loginResponse = new LoginResponse(account.getId(), account.getUsername());
             accountControllerLogger.info("Successful login | {}", loginResponse.toString());
             return ResponseEntity.status(HttpStatus.OK).body(loginResponse);

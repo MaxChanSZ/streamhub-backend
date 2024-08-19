@@ -21,9 +21,10 @@ public class AccountService {
 
     @Autowired
     private AccountRepository accountRepository;
+    private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(16);
 
 
-    public AccountService(AccountRepository accountRepository) {
+    public AccountService() {
         this.accountRepository = accountRepository;
     }
 
@@ -48,7 +49,7 @@ public class AccountService {
                 .orElse(false); // Account not found
     }
 
-    public Account loginUser(LoginRequest loginRequest, BCryptPasswordEncoder encoder) throws  UsernameNotFoundException,
+    public Account loginUser(LoginRequest loginRequest) throws  UsernameNotFoundException,
                                                                 IncorrectPasswordException {
         accountServiceLogger.info("Login attempt | {}", loginRequest.toString());
 
@@ -72,6 +73,7 @@ public class AccountService {
        return account;
     }
 
+
     public Account registerUser(RegistrationRequest registrationRequest) throws     InvalidUsernameException,
                                                                                     InvalidEmailAddressException,
                                                                                     InvalidPasswordException,
@@ -81,7 +83,7 @@ public class AccountService {
 
         String username = registrationRequest.getUsername();
         String email = registrationRequest.getEmail();
-        String password = registrationRequest.getPassword();
+        String password = encoder.encode(registrationRequest.getPassword());
 
         if (!isValidUsername(username)) {
             throw new InvalidUsernameException();
@@ -107,6 +109,20 @@ public class AccountService {
         accountRepository.save(account);
         accountServiceLogger.info("Successful registration | {}", account.toString());
         return account;
+    }
+
+    //ping user checks that a user exists and returns the user, or null if user does not exist.
+    public Account pingUser(RegistrationRequest registrationRequest) {
+        accountServiceLogger.info("Pinging user | {}", registrationRequest.toString());
+
+        Optional<Account> accountOptional = accountRepository.findByUsername(registrationRequest.getUsername());
+
+        if (accountOptional.isPresent()) {
+            accountServiceLogger.info("User {} found.", registrationRequest.getUsername());
+            return accountOptional.get();
+        }
+        accountServiceLogger.info("User {} not found.", registrationRequest.getUsername());
+        return null;
     }
 
     private boolean isEmailAddressAvailable(String email) {
