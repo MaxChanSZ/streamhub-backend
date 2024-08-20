@@ -18,5 +18,15 @@ public class Message {
     private String content;
     private String sender;
     private String sessionId;
+
+    @Override
+    public String toString() {
+        return "Message{" +
+                "type=" + type +
+                ", content='" + content + '\'' +
+                ", sender='" + sender + '\'' +
+                ", sessionId='" + sessionId + '\'' +
+                '}';
+    }
 }
 
