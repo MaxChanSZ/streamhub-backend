@@ -25,4 +25,7 @@ public class SeriesService {
     public Optional<Series> findSeries(long id) {
         return seriesRepository.findById(id);
     }
+    public List<Series> findNewestSeries(int limit) {
+        return seriesRepository.findTopByOrderByReleaseDateDesc(limit);
+    }
 }
