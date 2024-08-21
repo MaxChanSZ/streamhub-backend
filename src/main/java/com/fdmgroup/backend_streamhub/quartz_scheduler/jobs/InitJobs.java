@@ -33,8 +33,6 @@ public class InitJobs extends QuartzJobBean {
             throw new RuntimeException(e);
         } catch (UnavailableUsernameException e) {
             throw new RuntimeException(e);
-        } catch (UnavailablePasswordException e) {
-            throw new RuntimeException(e);
         }
     }
 }
