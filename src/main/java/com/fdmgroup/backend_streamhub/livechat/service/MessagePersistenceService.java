@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class MessagePersistenceService {
     @Autowired
@@ -23,8 +25,12 @@ public class MessagePersistenceService {
         messageRepository.save(message);
     }
 
-    public void deleteWatchpartyMessages(String sessionId) {
-        // TODO implement delete method to delete all messages from a given watchparty when watchparty is ended
+    public List<Message> findMessagesBySession(String sessionId) {
+        return messageRepository.findBySessionId(sessionId);
+    }
 
+    public long deleteMessagesBySession(String sessionId) {
+        // return count of messages deleted
+        return messageRepository.deleteMessagesBySessionId(sessionId);
     }
 }
