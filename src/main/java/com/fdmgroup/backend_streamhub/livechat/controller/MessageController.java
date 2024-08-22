@@ -2,6 +2,7 @@ package com.fdmgroup.backend_streamhub.livechat.controller;
 
 import com.fdmgroup.backend_streamhub.livechat.constant.KafkaConstants;
 import com.fdmgroup.backend_streamhub.livechat.models.Message;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -33,6 +34,7 @@ public class MessageController {
       message.setSender("anonymous");
     }
     message.setMessageID(counter++);
+    message.setTimeStamp(LocalDateTime.now());
     messages.add(message); // Save message to list
 
     template.convertAndSend("/topic/chat/" + message.getSessionId(), message);
