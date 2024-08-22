@@ -1,5 +1,6 @@
 package com.fdmgroup.backend_streamhub.livechat.models;
 
+import java.time.LocalDateTime;
 import lombok.*;
 
 @NoArgsConstructor
@@ -14,11 +15,14 @@ public class Message {
   private String content;
   private String sender;
   private String sessionId;
+  private LocalDateTime timeStamp;
 
   @Override
   public String toString() {
     return "Message{"
-        + "type="
+        + "messageID="
+        + messageID
+        + ", type="
         + type
         + ", content='"
         + content
@@ -29,6 +33,8 @@ public class Message {
         + ", sessionId='"
         + sessionId
         + '\''
+        + ", timeStamp="
+        + timeStamp
         + '}';
   }
 }
