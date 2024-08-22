@@ -28,7 +28,7 @@ public class MessageController {
     message.setMessageID(counter++);
     messages.add(message); // Save message to list
 
-    template.convertAndSend("/topic/chat" + message.getSessionId(), message);
+    template.convertAndSend("/topic/chat/" + message.getSessionId(), message);
   }
 
   /*
