@@ -17,7 +17,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/account")
+@RequestMapping("/account/api")
+//@CrossOrigin(origins = "http://localhost:5173")
 public class AccountController {
 
     private final AccountService accountService;
@@ -35,7 +36,7 @@ public class AccountController {
         return new ResponseEntity<>("hello world", HttpStatus.OK);
     }
 
-    @GetMapping("/api")
+    @GetMapping("/")
     public ApiResponse apiHomeController(){
         ApiResponse response = new ApiResponse();
         response.setMessage("API Test Success");
@@ -43,7 +44,7 @@ public class AccountController {
         return response;
     }
 
-    @PostMapping("/api/accounttest")
+    @PostMapping("/accounttest")
     public ApiResponseAccount AccountUpdateTest(@RequestBody Account inputAccount) {
         //Future TODO: to transition this into an account updating API. When this is called, it should take in an 'account' input and return an account + status code & message to let caller know account has been updated (or has failed)
         // Note: It should have verification logic. Will use accountService to do account creation/update, then update and return response accordingly.
@@ -66,7 +67,7 @@ public class AccountController {
         return response;
     }
 
-    @PutMapping("/account/api/update")
+    @PutMapping("/update")
     public ApiResponseAccount AccountUpdate(@RequestBody Account inputAccount) {
         // TO ADD: Account creation/update logic.
         Account updatedAccount = accountService.updateAccount(inputAccount);
