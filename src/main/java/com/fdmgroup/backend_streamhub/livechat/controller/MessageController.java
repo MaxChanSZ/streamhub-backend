@@ -45,9 +45,6 @@ public class MessageController {
     } catch (InterruptedException | ExecutionException e) {
       System.out.println("Error sending message to kafka");
     }
-
-    //    return message; // Return the updated list of messages
-
   }
 
   /*
