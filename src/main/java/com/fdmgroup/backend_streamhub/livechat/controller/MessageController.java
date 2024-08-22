@@ -24,20 +24,20 @@ public class MessageController {
   @MessageMapping("/chat")
   @SendTo("/topic/chat")
   public Message handleChatMessage(Message message) {
-    System.out.println("Received message: " + message); // Print the received message content
     if (message.getSender().equals(null)) {
       message.setSender("anonymous");
     }
     messages.add(message); // Save message to list
-    System.out.println(message.getContent());
+
     // send a message to the kafka topic
     try {
       //Sending the message to kafka topic queue
-      kafkaTemplate.send("my-chat", message).get();
+      kafkaTemplate.send("streamhub-chat", message).get();
       System.out.println("Message sent to kafka");
     } catch (InterruptedException | ExecutionException e) {
       System.out.println("Error sending message to kafka");
     }
+
     return message; // Return the updated list of messages
   }
 

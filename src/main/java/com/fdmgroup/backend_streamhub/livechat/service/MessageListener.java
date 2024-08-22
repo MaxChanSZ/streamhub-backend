@@ -10,7 +10,7 @@ public class MessageListener {
 //    SimpMessagingTemplate template;
 
     @KafkaListener(
-            topics = "my-chat",
+            topics = "streamhub-chat",
             groupId = "random"
     )
     public void listen(Message message)
