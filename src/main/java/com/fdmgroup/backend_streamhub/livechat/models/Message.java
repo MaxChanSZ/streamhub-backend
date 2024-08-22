@@ -5,6 +5,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.*;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 
 @NoArgsConstructor
@@ -12,6 +13,7 @@ import lombok.*;
 @Getter
 @Setter
 @Builder
+@Document("chat-messages")
 public class Message {
 
     private MessageType type;

@@ -10,11 +10,11 @@ public class MessageListener {
 
     @KafkaListener(
             topics = KafkaConstants.KAFKA_TOPIC,
-            groupId = KafkaConstants.GROUP_ID
+            groupId = "test-listener"
     )
     public void listen(Message message)
     {
-        System.out.println("Received message : " + message);
+        System.out.println("Test Listener received message : " + message);
     }
 
 }
