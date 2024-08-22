@@ -7,19 +7,18 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
-public class MessageListener {
+public class MessageSenderService {
 
   SimpMessagingTemplate template;
 
-  public MessageListener(SimpMessagingTemplate template) {
+  public MessageSenderService(SimpMessagingTemplate template) {
     this.template = template;
   }
 
   @KafkaListener(topics = KafkaConstants.KAFKA_TOPIC, groupId = KafkaConstants.GROUP_ID)
-  public void listen(Message message) {
-
-    System.out.println("Received message by Listener: " + message);
-    template.convertAndSend("/topic/chat/" + message.getSessionId(), message);
-    System.out.println("Sent message from Listener: " + message);
+  public void sendMessage(Message message) {
+    //    System.out.println("Received message from Kafka by SenderService: " + message);
+    //    template.convertAndSend("/topic/chat/" + message.getSessionId(), message);
+    //    System.out.println("Sent message from senderService: " + message);
   }
 }
