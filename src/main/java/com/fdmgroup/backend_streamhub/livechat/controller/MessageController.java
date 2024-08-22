@@ -1,5 +1,6 @@
 package com.fdmgroup.backend_streamhub.livechat.controller;
 
+import com.fdmgroup.backend_streamhub.livechat.constant.KafkaConstants;
 import com.fdmgroup.backend_streamhub.livechat.models.Message;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +33,7 @@ public class MessageController {
     // send a message to the kafka topic
     try {
       //Sending the message to kafka topic queue
-      kafkaTemplate.send("streamhub-chat", message).get();
+      kafkaTemplate.send(KafkaConstants.KAFKA_TOPIC, message).get();
       System.out.println("Message sent to kafka");
     } catch (InterruptedException | ExecutionException e) {
       System.out.println("Error sending message to kafka");
