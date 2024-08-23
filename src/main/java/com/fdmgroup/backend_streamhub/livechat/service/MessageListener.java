@@ -15,7 +15,10 @@ public class MessageListener {
     this.template = template;
   }
 
-  @KafkaListener(topics = KafkaConstants.KAFKA_TOPIC, groupId = KafkaConstants.GROUP_ID)
+  @KafkaListener(
+      topics = KafkaConstants.KAFKA_TOPIC,
+      groupId = KafkaConstants.GROUP_ID + "-listener",
+      concurrency = "2")
   public void listen(Message message) {
 
     System.out.println("Received message by Listener: " + message);

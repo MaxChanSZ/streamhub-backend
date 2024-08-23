@@ -28,7 +28,6 @@ public class MessageController {
 
   @MessageMapping("/chat")
   public void handleChatMessage(Message message) {
-    System.out.println("Received message: " + message); // Print the received message content
 
     if (message.getSender().equals(null)) {
       message.setSender("anonymous");
@@ -36,11 +35,9 @@ public class MessageController {
     message.setMessageID(
         counter++); // set message ID (temp) TODO: change to entity and persist to db
     message.setTimeStamp(LocalDateTime.now()); // assign to current time
-    messages.add(message); // Save message to list
+    System.out.println("Received message: " + message); // Print the received message content
 
-    // send message to WebSocket topic to specific chatroom, e.g. /topic/chat/123
-    //    template.convertAndSend("/topic/chat/" + message.getSessionId(), message);
-    //    System.out.println("Sent message from MessageController: " + message);
+    messages.add(message); // Save message to list
 
     try {
       // Sending the message to kafka topic queue

@@ -15,10 +15,17 @@ public class MessageSenderService {
     this.template = template;
   }
 
-  @KafkaListener(topics = KafkaConstants.KAFKA_TOPIC, groupId = KafkaConstants.GROUP_ID)
+  @KafkaListener(
+      topics = KafkaConstants.KAFKA_TOPIC,
+      groupId = KafkaConstants.GROUP_ID + "-sender",
+      concurrency = "2")
   public void sendMessage(Message message) {
-    //    System.out.println("Received message from Kafka by SenderService: " + message);
-    //    template.convertAndSend("/topic/chat/" + message.getSessionId(), message);
-    //    System.out.println("Sent message from senderService: " + message);
+    System.out.println("Received message from Kafka by SenderService: " + message);
+    template.convertAndSend("/topic/chat/" + message.getSessionId(), message);
+    System.out.println(
+        "Sent message from senderService: "
+            + message
+            + " to /topic/chat/"
+            + message.getSessionId());
   }
 }
