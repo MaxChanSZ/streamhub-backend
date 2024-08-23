@@ -21,7 +21,7 @@ public class EmailController {
     @PostMapping("/email/sendSimpleEmail/test")
     public void sendEmail() {
         log.info("Email testing endpoint at externalServices - EmailController hit");
-        emailService.sendSimpleMessage("wmaxchan@gmail.com", "Test Email", "This is a test email");
+        emailService.sendSimpleMessage("targetEmailTest@gmail.com" /*change this to target email*/, "Test Email", "This is a test email");
         log.info("Email Sent!");
     }
 
