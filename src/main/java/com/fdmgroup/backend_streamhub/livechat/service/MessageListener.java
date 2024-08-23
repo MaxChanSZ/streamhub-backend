@@ -22,7 +22,7 @@ public class MessageListener {
   public void listen(Message message) {
 
     System.out.println("Received message by Listener: " + message);
-    template.convertAndSend("/topic/chat/" + message.getSessionId(), message);
-    System.out.println("Sent message from Listener: " + message);
+    //    template.convertAndSend("/topic/chat/" + message.getSessionId(), message);
+    //    System.out.println("Sent message from Listener: " + message);
   }
 }
