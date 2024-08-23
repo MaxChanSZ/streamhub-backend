@@ -9,21 +9,21 @@ import java.util.concurrent.ExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class MessageController {
 
-  @Autowired private KafkaTemplate<String, Object> kafkaTemplate;
+  private final KafkaTemplate<String, Object> kafkaTemplate;
 
   private final List<Message> messages = new ArrayList<>();
   private long counter = 0;
-  private final SimpMessagingTemplate template;
 
-  public MessageController(SimpMessagingTemplate template) {
-    this.template = template;
+  @Autowired
+  public MessageController(KafkaTemplate<String, Object> kafkaTemplate) {
+    this.kafkaTemplate = kafkaTemplate;
   }
 
   @MessageMapping("/chat")
@@ -68,6 +68,11 @@ public class MessageController {
   @GetMapping("/api/messages")
   public List<Message> getMessages() {
     return messages;
+  }
+
+  @GetMapping("/api/messages/{sessionID}")
+  public List<Message> getMessagesBySessionID(@PathVariable("sessionID") String sessionID) {
+    return messages.stream().filter(message -> message.getSessionId().equals(sessionID)).toList();
   }
 
   @GetMapping("/api/clearMessages")
