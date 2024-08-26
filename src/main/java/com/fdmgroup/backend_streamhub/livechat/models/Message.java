@@ -2,12 +2,14 @@ package com.fdmgroup.backend_streamhub.livechat.models;
 
 import java.time.LocalDateTime;
 import lombok.*;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 @Builder
+@Document("chat-messages")
 public class Message {
 
   private long messageID;
