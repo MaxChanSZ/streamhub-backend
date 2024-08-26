@@ -1,12 +1,8 @@
 package com.fdmgroup.backend_streamhub.livechat.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import java.time.LocalDateTime;
 import lombok.*;
 import org.springframework.data.mongodb.core.mapping.Document;
-
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -16,19 +12,31 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document("chat-messages")
 public class Message {
 
-    private MessageType type;
-    private String content;
-    private String sender;
-    private String sessionId;
+  private long messageID;
+  private MessageType type;
+  private String content;
+  private String sender;
+  private String sessionId;
+  private LocalDateTime timeStamp;
 
-    @Override
-    public String toString() {
-        return "Message{" +
-                "type=" + type +
-                ", content='" + content + '\'' +
-                ", sender='" + sender + '\'' +
-                ", sessionId='" + sessionId + '\'' +
-                '}';
-    }
+  @Override
+  public String toString() {
+    return "Message{"
+        + "messageID="
+        + messageID
+        + ", type="
+        + type
+        + ", content='"
+        + content
+        + '\''
+        + ", sender='"
+        + sender
+        + '\''
+        + ", sessionId='"
+        + sessionId
+        + '\''
+        + ", timeStamp="
+        + timeStamp
+        + '}';
+  }
 }
-
