@@ -2,21 +2,18 @@ package com.fdmgroup.backend_streamhub.quartz_scheduler.jobs;
 
 import com.fdmgroup.backend_streamhub.authenticate.exceptions.*;
 import com.fdmgroup.backend_streamhub.quartz_scheduler.service.JobService;
+import java.util.logging.Logger;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 import org.springframework.stereotype.Component;
 
-import java.util.logging.Logger;
-
 @Component
 public class InitJobs extends QuartzJobBean {
 
-    @Autowired
-    private JobService jobService;
-    private final Logger logger = Logger.getLogger(InitJobs.class.getName());
-
+  @Autowired private JobService jobService;
+  private final Logger logger = Logger.getLogger(InitJobs.class.getName());
 
     @Override
     protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
@@ -35,4 +32,9 @@ public class InitJobs extends QuartzJobBean {
             throw new RuntimeException(e);
         }
     }
+    // commented out missing exception
+    //        catch (UnavailablePasswordException e) {
+    //            throw new RuntimeException(e);
+    //        }
+  }
 }

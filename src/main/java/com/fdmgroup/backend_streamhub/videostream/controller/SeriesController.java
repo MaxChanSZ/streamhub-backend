@@ -53,4 +53,17 @@ public class SeriesController {
 
         return ResponseEntity.ok(videoList);
     }
+
+    @GetMapping("/newest")
+    private ResponseEntity<List<Series>> getNewestSeries() {
+        List<Series> seriesList = seriesService.findNewestSeries(8);
+        seriesList.forEach(series -> series.setThumbnailURL(THUMBNAIL_BASE_URL + series.getThumbnailURL()));
+        return ResponseEntity.ok(seriesList);
+    }
+    @GetMapping("/top-rated")
+    private ResponseEntity<List<Series>> getTopRatedSeries() {
+        List<Series> seriesList = seriesService.findTopRatedSeries(5);
+        seriesList.forEach(series -> series.setThumbnailURL(THUMBNAIL_BASE_URL + series.getThumbnailURL()));
+        return ResponseEntity.ok(seriesList);
+    }
 }
