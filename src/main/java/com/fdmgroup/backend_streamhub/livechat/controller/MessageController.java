@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import com.fdmgroup.backend_streamhub.livechat.models.VideoAction;
 import com.fdmgroup.backend_streamhub.livechat.service.MessagePersistenceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -91,5 +92,18 @@ public class MessageController {
   public ResponseEntity<Void> deleteMessagesBySessionID(@PathVariable("sessionID") String sessionID) {
     messagePersistenceService.deleteMessagesBySession(sessionID);
     return ResponseEntity.ok().build();
+  }
+
+
+  @MessageMapping("/video")
+  public void handleVideoSync(VideoAction action) {
+
+    try {
+      // Sending the message to kafka topic queue
+      kafkaTemplate.send(KafkaConstants.KAFKA_VIDEO_TOPIC, action).get();
+      System.out.println("Video sync message sent to kafka");
+    } catch (InterruptedException | ExecutionException e) {
+      System.out.println("Error sending video sync message to kafka");
+    }
   }
 }

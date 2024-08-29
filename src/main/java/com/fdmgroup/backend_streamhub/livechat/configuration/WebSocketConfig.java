@@ -16,6 +16,13 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         .addEndpoint("/chat") // Web client connects to web server via '/chat' endpoint
         .setAllowedOrigins("http://localhost:5173") // allow requests from React app
         .withSockJS(); // client should connect with SockJS
+
+    // withSockJs will allow the websockets to work even if the browser does not support
+    // web sockets
+    registry
+        .addEndpoint("/video")
+        .setAllowedOrigins("http://localhost:5173")
+        .withSockJS();
   }
 
   @Override
