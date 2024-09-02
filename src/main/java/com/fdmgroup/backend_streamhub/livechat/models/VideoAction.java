@@ -14,7 +14,8 @@ import java.time.LocalTime;
 @Setter
 public class VideoAction {
     private String actionType;
-    private LocalDateTime actionTime;
-    private LocalTime videoTime;
+    private long actionTime;
+    private double videoTime;
     private String sessionId;
+    private String sender;
 }

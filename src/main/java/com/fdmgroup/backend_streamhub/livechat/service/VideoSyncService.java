@@ -20,7 +20,7 @@ public class VideoSyncService {
     )
     private void sendVideoSyncMessage(VideoAction action) {
         System.out.println("Sending video sync message to clients");
-        messagingTemplate.convertAndSend("/topic/video" + action.getSessionId(), action);
+        messagingTemplate.convertAndSend("/topic/video/" + action.getSessionId(), action);
         System.out.println("Video Sync Message sent to clients. " +
                 "Session Id: " + action.getSessionId() +
                 " Action: " + action.getActionType());

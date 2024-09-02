@@ -20,7 +20,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     // withSockJs will allow the websockets to work even if the browser does not support
     // web sockets
     registry
-        .addEndpoint("/video")
+        .addEndpoint("/video-sync")
         .setAllowedOrigins("http://localhost:5173")
         .withSockJS();
   }

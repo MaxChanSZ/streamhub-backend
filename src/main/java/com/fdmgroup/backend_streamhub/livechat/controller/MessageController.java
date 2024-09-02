@@ -93,17 +93,4 @@ public class MessageController {
     messagePersistenceService.deleteMessagesBySession(sessionID);
     return ResponseEntity.ok().build();
   }
-
-
-  @MessageMapping("/video")
-  public void handleVideoSync(VideoAction action) {
-
-    try {
-      // Sending the message to kafka topic queue
-      kafkaTemplate.send(KafkaConstants.KAFKA_VIDEO_TOPIC, action).get();
-      System.out.println("Video sync message sent to kafka");
-    } catch (InterruptedException | ExecutionException e) {
-      System.out.println("Error sending video sync message to kafka");
-    }
-  }
 }
