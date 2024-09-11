@@ -25,7 +25,7 @@ public class Series {
     private String description;
     private LocalDate releaseDate;
     private String thumbnailURL;
-    private String rating;
+    private byte rating;
     private String cast;
 
     @OneToMany(mappedBy = "series")

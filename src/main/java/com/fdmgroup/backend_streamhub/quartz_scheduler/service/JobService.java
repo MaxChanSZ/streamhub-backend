@@ -10,8 +10,8 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class JobService {
-
-  private final AccountService accountService;
+  
+private final AccountService accountService;
 
   @Autowired
   public JobService(AccountService accountService) {
