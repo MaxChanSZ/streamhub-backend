@@ -22,7 +22,6 @@ public class WatchPartyService {
 
     public WatchParty createWatchParty(String partyName, Long accountID) {
         Optional<Account> account = accountRepository.findById(accountID);
-
         if (account.isPresent()) {
             WatchParty watchParty = new WatchParty();
 
