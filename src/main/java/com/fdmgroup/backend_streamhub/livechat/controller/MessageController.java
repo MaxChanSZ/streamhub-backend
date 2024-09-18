@@ -2,13 +2,12 @@ package com.fdmgroup.backend_streamhub.livechat.controller;
 
 import com.fdmgroup.backend_streamhub.livechat.constant.KafkaConstants;
 import com.fdmgroup.backend_streamhub.livechat.models.Message;
+import com.fdmgroup.backend_streamhub.livechat.service.MessagePersistenceService;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
-
-import com.fdmgroup.backend_streamhub.livechat.models.VideoAction;
-import com.fdmgroup.backend_streamhub.livechat.service.MessagePersistenceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -23,8 +22,7 @@ public class MessageController {
   private final List<Message> messages = new ArrayList<>();
   private long counter = 0;
 
-  @Autowired
-  private MessagePersistenceService messagePersistenceService;
+  @Autowired private MessagePersistenceService messagePersistenceService;
 
   @Autowired
   public MessageController(KafkaTemplate<String, Object> kafkaTemplate) {
@@ -76,10 +74,18 @@ public class MessageController {
   }
 
   @GetMapping("/api/messages/{sessionID}")
-  public ResponseEntity<List<Message>> getMessagesBySessionID(@PathVariable("sessionID") String sessionID) {
-    List<Message> chatMessagesFromSession = messagePersistenceService.findMessagesBySession(sessionID);
-    return ResponseEntity.ok(chatMessagesFromSession);
-    //messages.stream().filter(message -> message.getSessionId().equals(sessionID)).toList();
+  public ResponseEntity<List<Message>> getMessagesBySessionID(
+      @PathVariable("sessionID") String sessionID) {
+    Optional<List<Message>> chatMessagesFromSession =
+        messagePersistenceService.findMessagesBySession(sessionID);
+    if (chatMessagesFromSession.isEmpty()) {
+      return ResponseEntity.internalServerError().build();
+    } else {
+      return ResponseEntity.ok(chatMessagesFromSession.get());
+    }
+
+    //    return ResponseEntity.ok(chatMessagesFromSession);
+    // messages.stream().filter(message -> message.getSessionId().equals(sessionID)).toList();
   }
 
   @GetMapping("/api/clearMessages")
@@ -89,7 +95,8 @@ public class MessageController {
   }
 
   @DeleteMapping("/api/messages/{sessionID}")
-  public ResponseEntity<Void> deleteMessagesBySessionID(@PathVariable("sessionID") String sessionID) {
+  public ResponseEntity<Void> deleteMessagesBySessionID(
+      @PathVariable("sessionID") String sessionID) {
     messagePersistenceService.deleteMessagesBySession(sessionID);
     return ResponseEntity.ok().build();
   }

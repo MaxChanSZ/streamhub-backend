@@ -3,8 +3,8 @@ package com.fdmgroup.backend_streamhub.livechat.service;
 import com.fdmgroup.backend_streamhub.livechat.constant.KafkaConstants;
 import com.fdmgroup.backend_streamhub.livechat.models.Message;
 import com.fdmgroup.backend_streamhub.livechat.repository.IMessageRepository;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
@@ -20,16 +20,16 @@ public class MessagePersistenceService {
     messageRepository.save(message);
   }
 
-  public List<Message> findMessagesBySession(String sessionId) {
+  public Optional<List<Message>> findMessagesBySession(String sessionId) {
     List<Message> messages;
     try {
       messages = messageRepository.findBySessionId(sessionId);
     } catch (Exception e) {
       System.out.println(e.getMessage());
-      return new ArrayList<>();
+      return Optional.empty();
     }
 
-    return messages;
+    return Optional.of(messages);
   }
 
   public long deleteMessagesBySession(String sessionId) {
