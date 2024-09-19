@@ -13,13 +13,17 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
   @Override
   public void registerStompEndpoints(StompEndpointRegistry registry) {
     registry
-        .addEndpoint("/chat", "/emoji") // Web client connects to web server via '/chat' endpoint
+        .addEndpoint(
+            "/chat",
+            "/video-sync",
+            "/emoji") // Web client connects to web server via '/chat' endpoint
         .setAllowedOrigins("http://localhost:5173") // allow requests from React app
         .withSockJS(); // client should connect with SockJS
 
     // withSockJs will allow the websockets to work even if the browser does not support
     // web sockets
-    registry.addEndpoint("/video-sync").setAllowedOrigins("http://localhost:5173").withSockJS();
+    //
+    // registry.addEndpoint("/video-sync").setAllowedOrigins("http://localhost:5173").withSockJS();
   }
 
   @Override
