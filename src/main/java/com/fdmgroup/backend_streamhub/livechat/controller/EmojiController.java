@@ -10,14 +10,16 @@ public class EmojiController {
 
   SimpMessagingTemplate template;
 
+  int latestID = 0;
+
   public EmojiController(SimpMessagingTemplate template) {
     this.template = template;
   }
 
-  @MessageMapping
+  @MessageMapping("/emoji")
   public void handleEmojiReactions(EmojiReaction emoji) {
-
-    System.out.println(emoji.toString());
+    emoji.setEmojiID(latestID++);
+    System.out.println(emoji);
     template.convertAndSend("/topic/emoji/" + emoji.getSESSION_ID(), emoji);
   }
 }
