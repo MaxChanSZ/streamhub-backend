@@ -18,8 +18,8 @@ public class EmojiController {
 
   @MessageMapping("/emoji")
   public void handleEmojiReactions(EmojiReaction emoji) {
-    emoji.setEmojiID(latestID++);
     System.out.println(emoji);
     template.convertAndSend("/topic/emoji/" + emoji.getSESSION_ID(), emoji);
+    System.out.println("hehe");
   }
 }

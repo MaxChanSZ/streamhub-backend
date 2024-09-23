@@ -11,9 +11,9 @@ import lombok.ToString;
 @ToString
 public class EmojiReaction {
 
-  @Setter private long emojiID;
+  private final String ID;
 
-  private final EmojiType TYPE;
+  private final String TYPE;
 
   private final String SESSION_ID;
 
