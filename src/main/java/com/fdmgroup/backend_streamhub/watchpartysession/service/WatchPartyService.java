@@ -20,13 +20,15 @@ public class WatchPartyService {
     @Autowired
     AccountRepository accountRepository;
 
-    public WatchParty createWatchParty(String partyName, Long accountID) {
+    public WatchParty createWatchParty(String partyName, Long accountID, String scheduledDate, String scheduledTime) {
         Optional<Account> account = accountRepository.findById(accountID);
         if (account.isPresent()) {
             WatchParty watchParty = new WatchParty();
 
             watchParty.setPartyName(partyName);
             watchParty.setAccount(account.get());
+            watchParty.setScheduledDate(scheduledDate);
+            watchParty.setScheduledTime(scheduledTime);
 
             return watchPartyRepository.save(watchParty);
         } else {
