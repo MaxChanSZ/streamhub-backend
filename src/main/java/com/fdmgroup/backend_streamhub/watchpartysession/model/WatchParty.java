@@ -37,6 +37,10 @@ public class WatchParty {
     @JsonIgnore
     private Account account;
 
+    @OneToOne(mappedBy = "watchParty")
+    @JsonIgnore
+    private Poll poll;
+
     @PrePersist
     protected void onCreate() {
         this.code = generateCode();
