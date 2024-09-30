@@ -7,6 +7,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.File;
+import java.util.UUID;
+
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
@@ -20,8 +23,15 @@ public class PollOption {
 
     private String value;
 
+    private String description;
+
+    private String imageUrl;
+
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "poll_id")
     @JsonIgnore
     private Poll poll;
+
+
+
 }

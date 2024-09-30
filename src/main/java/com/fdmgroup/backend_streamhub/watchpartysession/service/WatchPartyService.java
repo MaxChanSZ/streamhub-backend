@@ -44,33 +44,4 @@ public class WatchPartyService {
     public Optional<WatchParty> findByCode(String code) {
         return watchPartyRepository.findByCode(code);
     }
-
-    public Poll createPoll(Long watchPartyId, String question) {
-        Optional<WatchParty> watchParty = watchPartyRepository.findById(watchPartyId);
-
-        if (watchParty.isPresent()) {
-            Poll poll = new Poll();
-
-            poll.setQuestion(question);
-            poll.setWatchParty(watchParty.get());
-
-            return pollRepository.save(poll);
-        } else {
-            throw new RuntimeException("Watchparty not found");
-        }
-    }
-
-    public PollOption createOption(Long pollId, String value) {
-        Optional<Poll> poll = pollRepository.findById(pollId);
-
-        if (poll.isPresent()) {
-            PollOption option = new PollOption();
-            option.setValue(value);
-            option.setPoll(poll.get());
-
-            return optionRepository.save(option);
-        } else {
-            throw new RuntimeException("Poll not found");
-        }
-    }
 }
