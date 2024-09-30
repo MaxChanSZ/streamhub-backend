@@ -25,6 +25,10 @@ public class WatchParty {
 
     private String partyName;
     private String code;
+
+    // Add password to authenticate users joining a watchparty
+    private String password;
+
     private LocalDate createdDate;
 
     @ManyToOne(cascade = CascadeType.ALL)
