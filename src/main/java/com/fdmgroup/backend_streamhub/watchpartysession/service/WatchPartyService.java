@@ -3,6 +3,8 @@ package com.fdmgroup.backend_streamhub.watchpartysession.service;
 import com.fdmgroup.backend_streamhub.authenticate.model.Account;
 import com.fdmgroup.backend_streamhub.authenticate.repository.AccountRepository;
 import com.fdmgroup.backend_streamhub.videostream.repository.IVideoRepository;
+import com.fdmgroup.backend_streamhub.watchpartysession.repository.IPollOptionRepository;
+import com.fdmgroup.backend_streamhub.watchpartysession.repository.IPollRepository;
 import com.fdmgroup.backend_streamhub.watchpartysession.model.WatchParty;
 import com.fdmgroup.backend_streamhub.watchpartysession.repository.IWatchPartyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +17,6 @@ public class WatchPartyService {
 
     @Autowired
     IWatchPartyRepository watchPartyRepository;
-    @Autowired
-    IVideoRepository videoRepository;
     @Autowired
     AccountRepository accountRepository;
 
@@ -35,7 +35,6 @@ public class WatchPartyService {
             throw new RuntimeException("Account not found");
         }
     }
-
     public Optional<WatchParty> findByCode(String code) {
         return watchPartyRepository.findByCode(code);
     }
