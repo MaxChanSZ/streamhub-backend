@@ -43,11 +43,20 @@ public class PollService {
             PollOption option = new PollOption();
             option.setValue(value);
             option.setPoll(poll.get());
-            option.setDescription(description);
+            // save description when not empty
+            if (!description.isEmpty()) {
+                option.setDescription(description);
+            }
             PollOption newOption = pollOptionRepository.save(option);
-            String newImageUrl = newOption.getPoll().getId() + "-" + newOption.getId() + "-" + fileName;
-            newOption.setImageUrl(newImageUrl);
-            return pollOptionRepository.save(newOption);
+            if (fileName == null) {
+               return newOption;
+            } else {
+                // save image url in the db if there is any images
+                String newImageUrl = newOption.getPoll().getId() + "-" + newOption.getId() + "-" + fileName;
+                newOption.setImageUrl(newImageUrl);
+                return pollOptionRepository.save(newOption);
+            }
+
         } else {
             throw new RuntimeException("Poll not found");
         }

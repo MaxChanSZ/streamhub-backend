@@ -23,6 +23,7 @@ public class PollOption {
 
     private String value;
 
+    @Column(columnDefinition = "TEXT")
     private String description;
 
     private String imageUrl;

@@ -8,12 +8,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-
 @RestController
 @RequestMapping("/api/watch-party")
 public class WatchPartyController {
 
-    @Autowired WatchPartyService watchPartyService;
+  @Autowired WatchPartyService watchPartyService;
 
   @PostMapping("/create")
   public ResponseEntity<WatchParty> createWatchParty(
