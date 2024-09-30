@@ -52,4 +52,11 @@ public class PollController {
        List<PollOption> pollOptionsList = pollService.getPollOptionsByPoll(pollId);
        return ResponseEntity.status(HttpStatus.CREATED).body(pollOptionsList);
     }
+
+    @PostMapping("/get-poll-by-watchparty")
+    public ResponseEntity<Poll> getPollByWatchParty(@RequestParam("watchPartyId") long watchpartyId) {
+        Poll poll = pollService.getPollByWatchPartyId(watchpartyId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(poll);
+    }
+
 }

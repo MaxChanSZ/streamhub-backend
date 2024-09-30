@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface IPollRepository extends JpaRepository<Poll, Long> {
-    Optional<Poll> findById(long pollId);
+    Optional<Poll> findByWatchPartyId(long watchPartyId);
 }

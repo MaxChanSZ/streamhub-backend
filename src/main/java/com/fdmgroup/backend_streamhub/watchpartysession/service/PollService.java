@@ -65,4 +65,14 @@ public class PollService {
     public List<PollOption> getPollOptionsByPoll(Long pollId) {
         return pollOptionRepository.findByPollId(pollId);
     }
+
+    public Poll getPollByWatchPartyId(Long watchPartyId) {
+        Optional<Poll> poll =  pollRepository.findByWatchPartyId(watchPartyId);
+        return poll.orElse(null);
+    }
+
+    public PollOption getPollOption(Long pollOptionId) {
+        Optional<PollOption> pollOption = pollOptionRepository.findById(pollOptionId);
+        return pollOption.orElse(null);
+    }
 }
