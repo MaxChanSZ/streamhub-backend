@@ -25,6 +25,8 @@ public class WatchParty {
 
     private String partyName;
     private String code;
+    private String scheduledDate;
+    private String scheduledTime;
 
     // Add password to authenticate users joining a watchparty
     private String password;
@@ -40,6 +42,10 @@ public class WatchParty {
     @JoinColumn(name = "user_id")
     @JsonIgnore
     private Account account;
+
+    @OneToOne(mappedBy = "watchParty")
+    @JsonIgnore
+    private Poll poll;
 
     @PrePersist
     protected void onCreate() {
