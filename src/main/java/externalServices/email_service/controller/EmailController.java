@@ -1,7 +1,7 @@
 package externalServices.email_service.controller;
 
 import externalServices.email_service.dto.WatchPartyInvitationRequest;
-import externalServices.email_service.service.EmailServiceImpl;
+import externalServices.email_service.service.EmailService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -13,10 +13,10 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class EmailController {
 
-    @Autowired
-    private final EmailServiceImpl emailService;
+    private final EmailService emailService;
 
-    public EmailController(EmailServiceImpl emailService) {
+    @Autowired
+    public EmailController(EmailService emailService) {
         this.emailService = emailService;
     }
 
@@ -35,6 +35,7 @@ public class EmailController {
         }
     }
 }
+
 
 
 
