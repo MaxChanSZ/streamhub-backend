@@ -5,6 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
-public interface IWatchPartyRepository extends JpaRepository<WatchParty, Long> {
+public interface WatchPartyRepository extends JpaRepository<WatchParty, Long> {
     Optional<WatchParty> findByCode(String code);
 }
