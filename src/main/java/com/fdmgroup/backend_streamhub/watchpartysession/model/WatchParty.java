@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -29,6 +31,9 @@ public class WatchParty {
     private String scheduledTime;
     private LocalDate createdDate;
 
+    @ElementCollection
+    List<String> participants = new ArrayList<>();
+
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "video_id")
     @JsonIgnore
@@ -47,6 +52,10 @@ public class WatchParty {
 
     private String generateCode() {
         return UUID.randomUUID().toString().substring(0, 6).toUpperCase();
+    }
+
+    public void addParticipant(String username) {
+        participants.add(username);
     }
 
 }
