@@ -8,8 +8,9 @@ import lombok.Setter;
 public class CreateWatchPartyRequest {
     private String partyName;
     private Long accountID;
-<<<<<<< HEAD
     private String password;
+    private String scheduledDate;
+    private String scheduledTime;
 
     public String getPartyName() {
         return partyName;
@@ -34,8 +35,4 @@ public class CreateWatchPartyRequest {
     public void setPassword(String password) {
         this.password = password;
     }
-=======
-    private String scheduledDate;
-    private String scheduledTime;
->>>>>>> origin/SCRUM-172
 }
