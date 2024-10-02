@@ -1,12 +1,10 @@
 package com.fdmgroup.backend_streamhub.quartz_scheduler.config;
 
-import com.fdmgroup.backend_streamhub.quartz_scheduler.jobs.InitJobs;
 import com.fdmgroup.backend_streamhub.quartz_scheduler.jobs.SendWatchPartyEmailJob;
 import org.quartz.*;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 
 import java.util.logging.Logger;
 
@@ -21,7 +19,7 @@ public class SchedulerConfig {
         return JobBuilder.newJob().ofType(SendWatchPartyEmailJob.class)
                 .storeDurably()
                 .withIdentity("WatchPartyEmailJob")
-                .withDescription("Send emails for upcoming watch parties")
+                .withDescription("Send reminder emails for upcoming watch parties")
                 .build();
     }
 
@@ -29,8 +27,9 @@ public class SchedulerConfig {
     public Trigger watchPartyEmailTrigger(JobDetail watchPartyEmailJobDetail) {
         return TriggerBuilder.newTrigger().forJob(watchPartyEmailJobDetail)
                 .withIdentity("WatchPartyEmailTrigger")
-                .withDescription("Trigger for sending watch party emails")
-                .withSchedule(CronScheduleBuilder.dailyAtHourAndMinute(0, 0))  // Run daily at midnight
+                .withDescription("Trigger for sending watch party reminder emails")
+                .withSchedule(CronScheduleBuilder.cronSchedule("0 * * * * ?"))  // Run every minute
                 .build();
     }
 }
+
