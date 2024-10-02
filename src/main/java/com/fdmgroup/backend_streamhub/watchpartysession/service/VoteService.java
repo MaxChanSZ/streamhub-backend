@@ -38,8 +38,8 @@ public class VoteService {
             throw new RuntimeException("Account not found");
         }
 
-        // check if user has casted vote on this poll previously
-        Optional<Vote> prevVote = voteRepository.findByPollIdAndUserId(pollId, accountId);
+        //check if user has casted vote on this poll previously
+        Optional<Vote> prevVote = voteRepository.findByPollAndAccount(poll.get(), account.get());
 
         if (prevVote.isPresent()) {
             throw new RuntimeException("User already voted on this poll");
@@ -53,21 +53,35 @@ public class VoteService {
         return voteRepository.save(vote);
     }
 
-    // to check if vote has already being casted by a user on a certain poll
+    //to check if vote has already being casted by a user on a certain poll
     public Vote getVoteByPollAndAccount(long pollId, long userId) {
-        return voteRepository.findByPollIdAndUserId(pollId, userId).orElse(null);
+        Optional<Poll> poll = pollRepository.findById(pollId);
+        Optional<Account> account = accountRepository.findById(userId);
+        if (poll.isEmpty()) {
+            throw new RuntimeException("Poll not found");
+        } if (account.isEmpty()) {
+            throw new RuntimeException("Account not found");
+        }
+        return voteRepository.findByPollAndAccount(poll.get(), account.get()).orElse(null);
     }
 
     public Vote changeVote(long pollId, long userId, long newPollOptionId) {
         // find present vote of the user on the specific poll
-        Optional<Vote> prevVote = voteRepository.findByPollIdAndUserId(pollId, userId);
+        Optional<Poll> poll = pollRepository.findById(pollId);
+        Optional<Account> account = accountRepository.findById(userId);
+        if (poll.isEmpty()) {
+            throw new RuntimeException("Poll not found");
+        } if (account.isEmpty()) {
+            throw new RuntimeException("Account not found");
+        }
+        Optional<Vote> prevVote = voteRepository.findByPollAndAccount(poll.get(), account.get());
         if (prevVote.isPresent()) {
             Vote newVote = prevVote.get();
             Optional<PollOption> pollOption = pollOptionRepository.findByIdAndPollId(newPollOptionId, pollId);
             if (pollOption.isPresent()) {
                 // update new poll option if it exists
-                newVote.setPollOption(pollOption);
-                voteRepository.save(newVote);
+                newVote.setPollOption(pollOption.get());
+                return voteRepository.save(newVote);
             } else {
                 throw new RuntimeException("Poll Option doesnt exist in this poll");
             }

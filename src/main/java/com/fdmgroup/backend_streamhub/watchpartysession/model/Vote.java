@@ -3,7 +3,16 @@ package com.fdmgroup.backend_streamhub.watchpartysession.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fdmgroup.backend_streamhub.authenticate.model.Account;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 public class Vote {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

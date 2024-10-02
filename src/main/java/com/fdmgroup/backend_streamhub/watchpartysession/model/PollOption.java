@@ -33,12 +33,12 @@ public class PollOption {
     @JsonIgnore
     private Poll poll;
 
-    @OneToMany(mappedBy = "pollOption")
-    @JsonIgnore
-    private List<Vote> votes = new ArrayList<>();
-
-    public void addVotes(Vote vote) {
-        votes.add(vote);
-    }
+//    @OneToMany(mappedBy = "pollOption")
+//    @JsonIgnore
+//    private List<Vote> votes = new ArrayList<>();
+//
+//    public void addVotes(Vote vote) {
+//        votes.add(vote);
+//    }
 
 }

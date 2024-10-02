@@ -54,6 +54,7 @@ public class Account implements UserDetails {
      * @param email     The email address of an Account entity.
      * @param password  The password of an Account entity.
      */
+
     public Account(String username, String email, String password) {
         this.username = username;
         this.email = email;

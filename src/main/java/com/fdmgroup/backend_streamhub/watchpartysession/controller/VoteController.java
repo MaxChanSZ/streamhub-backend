@@ -30,9 +30,6 @@ public class VoteController {
         PollOption pollOption = pollService.getPollOption(pollOptionId);
         if(pollOption != null) {
             Vote vote = voteService.createVote(pollId, pollOptionId, accountId);
-            Poll poll = pollOption.getPoll();
-            pollOption.addVotes(vote);
-            poll.addVotes(vote);
             return ResponseEntity.status(HttpStatus.CREATED).body(vote);
         }
         return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
