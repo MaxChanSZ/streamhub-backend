@@ -8,11 +8,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/watch-party")
 public class WatchPartyController {
 
-  @Autowired WatchPartyService watchPartyService;
+  @Autowired
+  WatchPartyService watchPartyService;
 
   @PostMapping("/create")
   public ResponseEntity<WatchParty> createWatchParty(
@@ -25,4 +28,17 @@ public class WatchPartyController {
     );
     return ResponseEntity.status(HttpStatus.CREATED).body(watchParty);
   }
+
+  @GetMapping("/get/{userId}")
+  public ResponseEntity<List<WatchParty>> getWatchPartiesByUserId(@PathVariable Long userId) {
+    List<WatchParty> watchParties = watchPartyService.getWatchPartiesByUserId(userId);
+    return ResponseEntity.ok(watchParties);
+  }
+
+  @GetMapping("/get")
+  public ResponseEntity<List<WatchParty>> getAllWatchParties() {
+    List<WatchParty> watchParties = watchPartyService.getAllWatchParties();
+    return ResponseEntity.ok(watchParties);
+  }
 }
+
