@@ -9,8 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Component
@@ -24,20 +24,27 @@ public class SendWatchPartyEmailJob extends QuartzJobBean {
 
     @Override
     protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
-        LocalDate today = LocalDate.now();
-        LocalTime now = LocalTime.now();
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime fifteenMinutesLater = now.plusMinutes(15);
 
-        List<WatchParty> upcomingWatchParties = watchPartyRepository.findByScheduledDateAndScheduledTimeAfter(
-                today.toString(), now.toString());
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+
+        List<WatchParty> upcomingWatchParties = watchPartyRepository.findByScheduledDateAndScheduledTimeBetween(
+                fifteenMinutesLater.format(dateFormatter),
+                fifteenMinutesLater.format(timeFormatter),
+                now.format(timeFormatter)
+        );
 
         for (WatchParty watchParty : upcomingWatchParties) {
             String to = watchParty.getAccount().getEmail();
-            String subject = "Upcoming Watch Party: " + watchParty.getPartyName();
-            String text = String.format("Your watch party '%s' is scheduled for %s at %s. Don't forget to join!",
-                    watchParty.getPartyName(), watchParty.getScheduledDate(), watchParty.getScheduledTime());
+            String subject = "Reminder: Watch Party Starting Soon - " + watchParty.getPartyName();
+            String text = String.format("Your watch party '%s' is starting in 15 minutes! Don't forget to join at %s.",
+                    watchParty.getPartyName(), watchParty.getScheduledTime());
 
             emailService.sendSimpleMessage(to, subject, text);
         }
     }
 }
+
 
