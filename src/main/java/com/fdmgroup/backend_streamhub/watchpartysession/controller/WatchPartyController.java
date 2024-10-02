@@ -28,9 +28,10 @@ public class WatchPartyController {
       @RequestBody CreateWatchPartyRequest createWatchPartyRequest) {
     System.out.println(createWatchPartyRequest.getPartyName());
     System.out.println(createWatchPartyRequest.getAccountID());
+    System.out.println(createWatchPartyRequest.getPassword());
     WatchParty watchParty =
         watchPartyService.createWatchParty(
-            createWatchPartyRequest.getPartyName(), createWatchPartyRequest.getAccountID());
+            createWatchPartyRequest.getPartyName(), createWatchPartyRequest.getPassword(), createWatchPartyRequest.getAccountID());
     // return ResponseEntity.ok(watchParty);
     return ResponseEntity.status(HttpStatus.CREATED).body(watchParty);
   }
@@ -44,19 +45,19 @@ public class WatchPartyController {
 
     System.out.println("Code is " + code);
 
-//    Optional<WatchParty> watchPartyOptional = watchPartyService.findByCode(code);
-//
-//    if ( watchPartyOptional.isEmpty() ) {
-//      return ResponseEntity.notFound().build();
-//    }
-//
-//    WatchParty watchParty = watchPartyOptional.get();
-//
-//    String actualPassword = watchParty.getPassword();
-//
-//    if ( !password.equals(actualPassword) ) {
-//      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-//    }
+    Optional<WatchParty> watchPartyOptional = watchPartyService.findByCode(code);
+
+    if ( watchPartyOptional.isEmpty() ) {
+      return ResponseEntity.notFound().build();
+    }
+
+    WatchParty watchParty = watchPartyOptional.get();
+
+    String actualPassword = watchParty.getPassword();
+
+    if ( !password.equals(actualPassword) ) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
 
     // generate a token which contains the watch party information and return it to the user
     String token = tokenService.generateToken(code);
@@ -65,7 +66,7 @@ public class WatchPartyController {
     response.setToken(token);
     response.setHost(false);
     // response.setVideoSource(watchParty.getVideo().getVideoURL());
-    response.setRoomId("");
+    response.setRoomId(code);
 
     return ResponseEntity.ok(response);
   }

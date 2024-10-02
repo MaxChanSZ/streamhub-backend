@@ -1,6 +1,9 @@
 package com.fdmgroup.backend_streamhub.authenticate.service;
 
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.interfaces.DecodedJWT;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
@@ -12,6 +15,7 @@ import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Service;
 
+import javax.crypto.SecretKey;
 import java.security.Key;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -48,6 +52,8 @@ public class TokenService {
     // a watch party
     public String generateToken(String partyCode) {
         Instant now = Instant.now();
+        System.out.println("Current instant is: " + now);
+        System.out.println("Date of instant is: " + Date.from(now));
 
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuer("self")
@@ -68,22 +74,62 @@ public class TokenService {
         String token = Jwts
                 .builder()
                 .subject(partyCode)
-                .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + 3600000))
+                .issuedAt(Date.from(now))
+                .expiration(Date.from(now.plus(2, ChronoUnit.HOURS)))
                 .signWith(getSignInKey())
                 .compact();
 
         return token;
     }
 
-    private Key getSignInKey() {
+    private SecretKey getSignInKey() {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public boolean validateToken(String token, String partyCode) {
-        // String extractedPartyCode =
+    public String extractPartyCode(String token) {
+        Claims allClaims = extractAllClaims(token);
+        String partyCode = allClaims.get("sub").toString();
+        return partyCode;
+    }
+
+    private Claims extractAllClaims(String token) {
+        return Jwts
+                .parser()
+                .verifyWith(getSignInKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+    }
+
+
+    public boolean isExpired(String token) {
+
+        DecodedJWT decodedJWT = JWT.decode(token);
+
+        // System.out.println(allClaims.get("exp").getClass());
+        Date expiry = decodedJWT.getExpiresAt();
+
+        System.out.println("Expiry time is: " + expiry);
+        System.out.println("Current time is: " + new Date(System.currentTimeMillis()));
+
+        if ( expiry.before(new Date(System.currentTimeMillis())) ) {
+            return true;
+        }
         return false;
+    }
+
+    public boolean isValidToken(String token, String partyCode) {
+        // extract the party code from the token, and ensure that it matches the code of the
+        // party that the user is trying to join, and that the token has not expired
+
+        String extractedPartyCode = extractPartyCode(token);
+        System.out.println("Extracted party code: " + extractedPartyCode);
+        System.out.println("Actual party code: " + partyCode);
+        boolean expired = isExpired(token);
+        System.out.println("Expired status is: " + expired);
+
+        return ( extractedPartyCode.equals(partyCode) && !expired );
     }
 
 }

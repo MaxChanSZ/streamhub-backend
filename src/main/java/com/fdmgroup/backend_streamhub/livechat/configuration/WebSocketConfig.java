@@ -1,5 +1,7 @@
 package com.fdmgroup.backend_streamhub.livechat.configuration;
 
+import com.fdmgroup.backend_streamhub.livechat.service.WebSocketHandshakeInterceptor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
@@ -10,10 +12,14 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
+  @Autowired
+  WebSocketHandshakeInterceptor handshakeInterceptor;
+
   @Override
   public void registerStompEndpoints(StompEndpointRegistry registry) {
     registry
         .addEndpoint("/chat") // Web client connects to web server via '/chat' endpoint
+            .addInterceptors(handshakeInterceptor) // interceptor authenticates websocket connection
         .setAllowedOrigins("http://localhost:5173") // allow requests from React app
         .withSockJS(); // client should connect with SockJS
 
@@ -21,6 +27,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     // web sockets
     registry
         .addEndpoint("/video-sync")
+            .addInterceptors(handshakeInterceptor)
         .setAllowedOrigins("http://localhost:5173")
         .withSockJS();
   }

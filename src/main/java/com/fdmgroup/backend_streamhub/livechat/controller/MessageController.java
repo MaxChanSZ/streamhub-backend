@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -30,7 +32,18 @@ public class MessageController {
   }
 
   @MessageMapping("/chat")
-  public void handleChatMessage(Message message) {
+  public void handleChatMessage(Message message, SimpMessageHeaderAccessor headerAccessor) {
+
+    // Check if message sender is authorised to send a message in this live chat.
+    // if not, throw an exception
+    String partyCode = (String) headerAccessor.getSessionAttributes().get("partyCode");
+
+    if ( !message.getSessionId().equals(partyCode) ) {
+      //throw new AccessDeniedException("Unauthorised to send messages in this chat room");
+      System.out.println("Live chat token not valid");
+    } else {
+      System.out.println("Live chat token is also valid!");
+    }
 
     if (message.getSender().equals(null)) {
       message.setSender("anonymous");
