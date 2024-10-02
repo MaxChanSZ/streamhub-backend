@@ -2,6 +2,7 @@ package com.fdmgroup.backend_streamhub.watchpartysession.service;
 
 import com.fdmgroup.backend_streamhub.authenticate.model.Account;
 import com.fdmgroup.backend_streamhub.authenticate.repository.AccountRepository;
+import com.fdmgroup.backend_streamhub.watchpartysession.exceptions.WatchPartyNotFoundException;
 import com.fdmgroup.backend_streamhub.watchpartysession.model.WatchParty;
 import com.fdmgroup.backend_streamhub.watchpartysession.repository.IWatchPartyRepository;
 import org.apache.logging.log4j.LogManager;
@@ -28,9 +29,14 @@ public class WatchPartyService {
             if (watchPartyOptional.isPresent()) {
                 WatchParty watchParty = watchPartyOptional.get();
                 watchParty.addParticipant(username);
+            } else {
+                throw new WatchPartyNotFoundException();
             }
+        } catch (WatchPartyNotFoundException e) {
+            logger.error("Watch Party with code {} cannot be found", code);
+
         } catch (Exception e) {
-            logger.error("Unable to add participant to list of participants in WatchParty due to an unexpected error");
+            logger.fatal("Unable to add participant to list of participants in WatchParty due to an unexpected error");
         }
     }
 
