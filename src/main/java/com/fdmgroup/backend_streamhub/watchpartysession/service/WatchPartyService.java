@@ -30,7 +30,7 @@ public class WatchPartyService {
                 watchParty.addParticipant(username);
             }
         } catch (Exception e) {
-            logger.error("Unable to add participant to list of participants in WatchParty");
+            logger.error("Unable to add participant to list of participants in WatchParty due to an unexpected error");
         }
     }
 
