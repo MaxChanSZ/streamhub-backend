@@ -49,8 +49,6 @@ public class WatchPartyController {
     String code = joinRequest.getCode();
     String password = joinRequest.getPassword();
 
-    System.out.println("Code is " + code);
-
     Optional<WatchParty> watchPartyOptional = watchPartyService.findByCode(code);
 
     if ( watchPartyOptional.isEmpty() ) {
