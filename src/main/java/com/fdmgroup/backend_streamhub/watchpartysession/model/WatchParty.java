@@ -28,6 +28,8 @@ public class WatchParty {
 
     // Add password to authenticate users joining a watchparty
     private String password;
+    private String scheduledDate;
+    private String scheduledTime;
 
     private LocalDate createdDate;
 

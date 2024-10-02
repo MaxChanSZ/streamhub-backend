@@ -25,14 +25,20 @@ public class WatchPartyController {
 
   @PostMapping("/create")
   public ResponseEntity<WatchParty> createWatchParty(
-      @RequestBody CreateWatchPartyRequest createWatchPartyRequest) {
-    System.out.println(createWatchPartyRequest.getPartyName());
-    System.out.println(createWatchPartyRequest.getAccountID());
-    System.out.println(createWatchPartyRequest.getPassword());
-    WatchParty watchParty =
-        watchPartyService.createWatchParty(
-            createWatchPartyRequest.getPartyName(), createWatchPartyRequest.getPassword(), createWatchPartyRequest.getAccountID());
-    // return ResponseEntity.ok(watchParty);
+          @RequestBody CreateWatchPartyRequest createWatchPartyRequest) {
+
+//    System.out.println(createWatchPartyRequest.getPartyName());
+//    System.out.println(createWatchPartyRequest.getAccountID());
+//    System.out.println(createWatchPartyRequest.getPassword());
+
+    WatchParty watchParty = watchPartyService.createWatchParty(
+            createWatchPartyRequest.getPartyName(),
+            createWatchPartyRequest.getPassword(),
+            createWatchPartyRequest.getAccountID(),
+            createWatchPartyRequest.getScheduledDate(),
+            createWatchPartyRequest.getScheduledTime()
+    );
+
     return ResponseEntity.status(HttpStatus.CREATED).body(watchParty);
   }
 

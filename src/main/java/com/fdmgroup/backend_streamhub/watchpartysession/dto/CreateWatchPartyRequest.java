@@ -1,8 +1,14 @@
 package com.fdmgroup.backend_streamhub.watchpartysession.dto;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Setter
+@Getter
 public class CreateWatchPartyRequest {
     private String partyName;
     private Long accountID;
+<<<<<<< HEAD
     private String password;
 
     public String getPartyName() {
@@ -28,4 +34,8 @@ public class CreateWatchPartyRequest {
     public void setPassword(String password) {
         this.password = password;
     }
+=======
+    private String scheduledDate;
+    private String scheduledTime;
+>>>>>>> origin/SCRUM-172
 }
