@@ -110,9 +110,6 @@ public class TokenService {
         // System.out.println(allClaims.get("exp").getClass());
         Date expiry = decodedJWT.getExpiresAt();
 
-        System.out.println("Expiry time is: " + expiry);
-        System.out.println("Current time is: " + new Date(System.currentTimeMillis()));
-
         if ( expiry.before(new Date(System.currentTimeMillis())) ) {
             return true;
         }
@@ -124,10 +121,8 @@ public class TokenService {
         // party that the user is trying to join, and that the token has not expired
 
         String extractedPartyCode = extractPartyCode(token);
-        System.out.println("Extracted party code: " + extractedPartyCode);
-        System.out.println("Actual party code: " + partyCode);
+
         boolean expired = isExpired(token);
-        System.out.println("Expired status is: " + expired);
 
         return ( extractedPartyCode.equals(partyCode) && !expired );
     }

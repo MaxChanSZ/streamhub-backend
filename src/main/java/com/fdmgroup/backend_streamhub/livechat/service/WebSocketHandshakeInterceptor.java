@@ -36,22 +36,12 @@ public class WebSocketHandshakeInterceptor implements HandshakeInterceptor {
         String partyCode = uriComponents.getQueryParams().getFirst("roomID");
 
         if ( token != null ) {
-            System.out.println("Token is: " + token);
-
-            // validate token
-            System.out.println("Validating token");
-
-            if ( !tokenService.isValidToken(token, "wrong code") ) {
-                System.out.println("Wrong code returns false");
-            }
-
             if ( tokenService.isValidToken(token, partyCode) ) {
-                System.out.println("Token is valid");
+                // System.out.println("Token is valid");
                 attributes.put("partyCode", partyCode);
                 return true;
             }
         }
-
         return false;
     }
 
