@@ -1,6 +1,7 @@
 package com.fdmgroup.backend_streamhub.quartz_scheduler.controller;
 
 import com.fdmgroup.backend_streamhub.quartz_scheduler.jobs.InitJobs;
+import com.fdmgroup.backend_streamhub.quartz_scheduler.jobs.SendWatchPartyEmailJob;
 import org.quartz.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -34,6 +35,22 @@ public class JobController {
         }
     }
 
+    @PostMapping("jobs/watch-party-email")
+    public ResponseEntity sendWatchPartyEmails() {
+        try {
+            JobDetail jobDetail = JobBuilder.newJob(SendWatchPartyEmailJob.class)
+                    .withIdentity(UUID.randomUUID().toString())
+                    .build();
+            Trigger trigger = buildTrigger(jobDetail, ZonedDateTime.now());
+
+            scheduler.scheduleJob(jobDetail, trigger);
+
+            return new ResponseEntity(HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
 
 
     private JobDetail buildJobDetail(){

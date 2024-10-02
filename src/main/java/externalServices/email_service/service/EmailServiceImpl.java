@@ -27,3 +27,12 @@ public class EmailServiceImpl implements EmailService {
         log.info("Email sent: {}", message.toString());
     }
 }
+
+
+
+
+
+
+
+
+
