@@ -60,7 +60,6 @@ public class Account implements UserDetails {
         this.email = email;
         this.password = password;
     }
-
     /**
      * Returns a String representation of the {@code Account} entity.
      *

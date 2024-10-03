@@ -1,7 +1,5 @@
 package com.fdmgroup.backend_streamhub.watchpartysession.controller;
 
-import com.fdmgroup.backend_streamhub.watchpartysession.model.Poll;
-import com.fdmgroup.backend_streamhub.watchpartysession.model.PollOption;
 import com.fdmgroup.backend_streamhub.watchpartysession.model.Vote;
 import com.fdmgroup.backend_streamhub.watchpartysession.service.PollService;
 import com.fdmgroup.backend_streamhub.watchpartysession.service.VoteService;
@@ -32,15 +30,6 @@ public class VoteController {
         return ResponseEntity.status(HttpStatus.CREATED).body(vote);
 
     }
-
-//    @PostMapping(path="/check-by-poll-and-account")
-//    public ResponseEntity<Vote> checkVote(
-//            @RequestParam("pollId") long pollId,
-//            @RequestParam("accountId") long accountId) {
-//        // check if vote is already casted by user on the poll option
-//        Vote vote = voteService.getVoteByPollAndAccount(pollId, accountId);
-//        return ResponseEntity.status(HttpStatus.CREATED).body(vote);
-//    }
 
     @PostMapping(path="/change")
     public ResponseEntity<Vote> changeVote(

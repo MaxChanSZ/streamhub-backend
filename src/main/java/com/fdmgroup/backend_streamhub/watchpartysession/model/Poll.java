@@ -32,10 +32,6 @@ public class Poll {
     @JsonIgnore
     private List<PollOption> pollOptions = new ArrayList<>();
 
-//    @OneToMany(mappedBy = "poll")
-//    @JsonIgnore
-//    private List<Vote> votes = new ArrayList<>();
-
     public long getId() {
         return id;
     }
@@ -43,7 +39,5 @@ public class Poll {
     public void addPollOptions(PollOption pollOption) {
         pollOptions.add(pollOption);
     }
-//    public void addVotes(Vote vote) {
-//        votes.add(vote);
-//    }
+
 }

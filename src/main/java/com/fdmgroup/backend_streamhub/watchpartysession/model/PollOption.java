@@ -7,9 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
@@ -32,13 +29,5 @@ public class PollOption {
     @JoinColumn(name = "poll_id")
     @JsonIgnore
     private Poll poll;
-
-//    @OneToMany(mappedBy = "pollOption")
-//    @JsonIgnore
-//    private List<Vote> votes = new ArrayList<>();
-//
-//    public void addVotes(Vote vote) {
-//        votes.add(vote);
-//    }
 
 }
