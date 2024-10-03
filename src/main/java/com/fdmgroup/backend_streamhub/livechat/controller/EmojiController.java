@@ -10,7 +10,7 @@ public class EmojiController {
 
   SimpMessagingTemplate template;
 
-  int latestID = 0;
+  //  int latestID = 0;
 
   public EmojiController(SimpMessagingTemplate template) {
     this.template = template;

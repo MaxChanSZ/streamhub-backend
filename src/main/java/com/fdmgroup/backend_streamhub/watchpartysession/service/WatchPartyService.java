@@ -9,6 +9,7 @@ import com.fdmgroup.backend_streamhub.watchpartysession.repository.IWatchPartyRe
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -16,8 +17,6 @@ public class WatchPartyService {
 
     @Autowired
     IWatchPartyRepository watchPartyRepository;
-    @Autowired
-    IVideoRepository videoRepository;
     @Autowired
     AccountRepository accountRepository;
     @Autowired
@@ -49,4 +48,18 @@ public class WatchPartyService {
     public Optional<WatchParty> findByCode(String code) {
         return watchPartyRepository.findByCode(code);
     }
+
+    public List<WatchParty> getAllWatchParties() {
+        return watchPartyRepository.findAll();
+    }
+
+    public List<WatchParty> getWatchPartiesByUserId(Long userId) {
+        Optional<Account> account = accountRepository.findById(userId);
+        if (account.isPresent()) {
+            return watchPartyRepository.findByAccount(account.get());
+        } else {
+            throw new RuntimeException("Account not found");
+        }
+    }
 }
+
