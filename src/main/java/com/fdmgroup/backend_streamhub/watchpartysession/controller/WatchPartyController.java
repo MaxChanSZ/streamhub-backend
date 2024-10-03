@@ -23,6 +23,8 @@ public class WatchPartyController {
   @Autowired
   TokenService tokenService;
 
+  private final String VIDEO_BASE_URL = "http://localhost:8080/encoded/";
+
   @PostMapping("/create")
   public ResponseEntity<WatchParty> createWatchParty(
           @RequestBody CreateWatchPartyRequest createWatchPartyRequest) {
@@ -52,7 +54,7 @@ public class WatchPartyController {
     Optional<WatchParty> watchPartyOptional = watchPartyService.findByCode(code);
 
     if ( watchPartyOptional.isEmpty() ) {
-      return ResponseEntity.notFound().build();
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Invalid party code");
     }
 
     WatchParty watchParty = watchPartyOptional.get();
@@ -60,7 +62,7 @@ public class WatchPartyController {
     String actualPassword = watchParty.getPassword();
 
     if ( !password.equals(actualPassword) ) {
-      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Incorrect password for party code");
     }
 
     // generate a token which contains the watch party information and return it to the user
@@ -69,7 +71,7 @@ public class WatchPartyController {
     JoinWatchPartyResponse response = new JoinWatchPartyResponse();
     response.setToken(token);
     response.setHost(false);
-    // response.setVideoSource(watchParty.getVideo().getVideoURL());
+    response.setVideoSource(VIDEO_BASE_URL + watchParty.getVideo().getVideoURL());
     response.setRoomId(code);
 
     return ResponseEntity.ok(response);
