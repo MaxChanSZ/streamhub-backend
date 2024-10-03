@@ -26,31 +26,29 @@ public class VoteController {
             @RequestParam("pollId") long pollId,
             @RequestParam("pollOptionId") long pollOptionId,
             @RequestParam("accountId") long accountId) {
+
         // create vote
-        PollOption pollOption = pollService.getPollOption(pollOptionId);
-        if(pollOption != null) {
-            Vote vote = voteService.createVote(pollId, pollOptionId, accountId);
-            return ResponseEntity.status(HttpStatus.CREATED).body(vote);
-        }
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
+        Vote vote = voteService.createVote(pollId, pollOptionId, accountId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(vote);
+
     }
 
-    @PostMapping(path="/check-by-poll-and-account")
-    public ResponseEntity<Vote> checkVote(
-            @RequestParam("pollId") long pollId,
-            @RequestParam("accountId") long accountId) {
-        // check if vote is already casted by user on the poll option
-        Vote vote = voteService.getVoteByPollAndAccount(pollId, accountId);
-        return ResponseEntity.status(HttpStatus.CREATED).body(vote);
-    }
+//    @PostMapping(path="/check-by-poll-and-account")
+//    public ResponseEntity<Vote> checkVote(
+//            @RequestParam("pollId") long pollId,
+//            @RequestParam("accountId") long accountId) {
+//        // check if vote is already casted by user on the poll option
+//        Vote vote = voteService.getVoteByPollAndAccount(pollId, accountId);
+//        return ResponseEntity.status(HttpStatus.CREATED).body(vote);
+//    }
 
     @PostMapping(path="/change")
     public ResponseEntity<Vote> changeVote(
             @RequestParam("pollId") long pollId,
-            @RequestParam("pollOptionId") long newOptionId,
+            @RequestParam("newPollOptionId") long newPollOptionId,
             @RequestParam("accountId") long accountId) {
-        // create vote
-        Vote vote = voteService.changeVote(pollId, newOptionId, accountId);
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(vote);
+        // change vote
+        Vote vote = voteService.changeVote(pollId, newPollOptionId, accountId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(vote);
     }
 }

@@ -53,22 +53,10 @@ public class VoteService {
         return voteRepository.save(vote);
     }
 
-    //to check if vote has already being casted by a user on a certain poll
-    public Vote getVoteByPollAndAccount(long pollId, long userId) {
-        Optional<Poll> poll = pollRepository.findById(pollId);
-        Optional<Account> account = accountRepository.findById(userId);
-        if (poll.isEmpty()) {
-            throw new RuntimeException("Poll not found");
-        } if (account.isEmpty()) {
-            throw new RuntimeException("Account not found");
-        }
-        return voteRepository.findByPollAndAccount(poll.get(), account.get()).orElse(null);
-    }
-
-    public Vote changeVote(long pollId, long userId, long newPollOptionId) {
+    public Vote changeVote(long pollId, long newPollOptionId, long accountId) {
         // find present vote of the user on the specific poll
         Optional<Poll> poll = pollRepository.findById(pollId);
-        Optional<Account> account = accountRepository.findById(userId);
+        Optional<Account> account = accountRepository.findById(accountId);
         if (poll.isEmpty()) {
             throw new RuntimeException("Poll not found");
         } if (account.isEmpty()) {
@@ -83,12 +71,11 @@ public class VoteService {
                 newVote.setPollOption(pollOption.get());
                 return voteRepository.save(newVote);
             } else {
-                throw new RuntimeException("Poll Option doesnt exist in this poll");
+                throw new RuntimeException("Poll Option does not exist in this poll");
             }
 
         } else {
             throw new RuntimeException("Vote not yet done by user in this poll");
         }
     }
-
 }
