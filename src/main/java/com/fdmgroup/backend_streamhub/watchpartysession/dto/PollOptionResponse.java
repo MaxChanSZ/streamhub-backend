@@ -5,7 +5,7 @@ public class PollOptionResponse {
     private String value;
     private String description;
     private String imageUrl;
-    private int voteCount;
+    private long voteCount;
 
     public long getPollOptionId() {
         return pollOptionId;
@@ -23,11 +23,11 @@ public class PollOptionResponse {
         this.description = description;
     }
 
-    public int getVoteCount() {
+    public long getVoteCount() {
         return voteCount;
     }
 
-    public void setVoteCount(int voteCount) {
+    public void setVoteCount(long voteCount) {
         this.voteCount = voteCount;
     }
 

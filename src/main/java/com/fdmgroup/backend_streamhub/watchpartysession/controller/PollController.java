@@ -55,7 +55,7 @@ public class PollController {
     }
 
     @PostMapping("/get-watchparty-poll-by-code")
-    public ResponseEntity<WatchPartyPollResponse> getWatchPartyPollByCode(@RequestParam("code") String code, @RequestParam("userId") long userId) {
+    public ResponseEntity<WatchPartyPollResponse> getWatchPartyPollByCode(@RequestParam("code") String code, @RequestParam("userId") long userId)  {
         WatchPartyPollResponse response = pollService.getWatchPartyPollResponse(code, userId);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }

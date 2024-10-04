@@ -15,9 +15,7 @@ import com.fdmgroup.backend_streamhub.watchpartysession.repository.IWatchPartyRe
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -111,6 +109,7 @@ public class PollService {
         if(pollOptions.size() >= 2) {
             List<PollOptionResponse> pollOptionResponses = new ArrayList<>();
             Vote finalPrevVote = prevVote;
+
             pollOptionResponses = pollOptions.stream().map(pollOption -> {
                         PollOptionResponse optionResponse = new PollOptionResponse();
                         optionResponse.setPollOptionId(pollOption.getId());
@@ -122,12 +121,19 @@ public class PollService {
                         }
                         return optionResponse;
                     }).collect(Collectors.toList());
+
+            //query 3: return vote count for each poll option of the poll id
+            List<Map<Long, Long>> voteCountList = voteRepository.getVoteCountByPollId(watchPartyPoll.get().getId());
+            for(int i=0; i<voteCountList.size(); i++){
+                Map<Long,Long> voteCount = voteCountList.get(i);
+                PollOptionResponse optionResponseWithVote = pollOptionResponses.get(i);
+                optionResponseWithVote.setVoteCount(voteCount.get("vote_count"));
+            }
+
             response.setPollOptionList(pollOptionResponses);
         } else {
             throw new RuntimeException("No poll option created for this poll");
         }
-
-        //query 3: (to do in SCRUM-181) return vote count for each poll option of the poll id
 
         return response;
     }
