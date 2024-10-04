@@ -39,4 +39,5 @@ public class Poll {
     public void addPollOptions(PollOption pollOption) {
         pollOptions.add(pollOption);
     }
+
 }
