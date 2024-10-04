@@ -10,7 +10,7 @@ public class EmojiController {
 
   SimpMessagingTemplate template;
 
-  int latestID = 0;
+  //  int latestID = 0;
 
   public EmojiController(SimpMessagingTemplate template) {
     this.template = template;
@@ -19,7 +19,7 @@ public class EmojiController {
   @MessageMapping("/emoji")
   public void handleEmojiReactions(EmojiReaction emoji) {
     System.out.println(emoji);
-    template.convertAndSend("/topic/emoji/" + emoji.getSESSION_ID(), emoji);
-    System.out.println("hehe");
+    template.convertAndSend("/topic/emoji/" + emoji.SESSION_ID(), emoji);
+    //    System.out.println("hehe");
   }
 }
