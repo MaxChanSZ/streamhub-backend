@@ -8,7 +8,11 @@ import java.util.List;
 
 @Repository
 public interface WatchPartyRepository extends JpaRepository<WatchParty, Long> {
-    List<WatchParty> findByScheduledDateAndScheduledTimeBetween(String scheduledDate, String startTime, String endTime);
+    List<WatchParty> findByScheduledDateAndScheduledTimeBetween(
+            String scheduledDate,
+            String startTime,
+            String endTime
+    );
 }
 
 

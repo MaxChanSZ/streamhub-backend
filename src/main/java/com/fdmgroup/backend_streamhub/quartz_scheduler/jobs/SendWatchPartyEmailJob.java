@@ -28,12 +28,16 @@ public class SendWatchPartyEmailJob extends QuartzJobBean {
         LocalDateTime fifteenMinutesLater = now.plusMinutes(15);
 
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+
+        String currentDate = now.format(dateFormatter);
+        String startTime = now.format(timeFormatter);
+        String endTime = fifteenMinutesLater.format(timeFormatter);
 
         List<WatchParty> upcomingWatchParties = watchPartyRepository.findByScheduledDateAndScheduledTimeBetween(
-                fifteenMinutesLater.format(dateFormatter),
-                fifteenMinutesLater.format(timeFormatter),
-                now.format(timeFormatter)
+                currentDate,
+                startTime,
+                endTime
         );
 
         for (WatchParty watchParty : upcomingWatchParties) {
