@@ -22,12 +22,13 @@ public class WatchParty {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
-
+    private boolean reminderEmailSent = false;
     private String partyName;
     private String code;
 
     // Add password to authenticate users joining a watchparty
     private String password;
+
     private String scheduledDate;
     private String scheduledTime;
 

@@ -8,10 +8,10 @@ import com.fdmgroup.backend_streamhub.watchpartysession.dto.JoinWatchPartyRespon
 import com.fdmgroup.backend_streamhub.watchpartysession.model.WatchParty;
 import com.fdmgroup.backend_streamhub.watchpartysession.service.WatchPartyService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.Optional;
 import java.util.List;
 
@@ -57,7 +57,6 @@ public class WatchPartyController {
 
     return ResponseEntity.status(HttpStatus.CREATED).body(response);
   }
-
 
   @PostMapping("/join")
   public ResponseEntity<?> joinWatchParty(
