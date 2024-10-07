@@ -27,7 +27,7 @@ public class SendWatchPartyEmailJob extends QuartzJobBean {
     @Transactional
     protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
         LocalDateTime now = LocalDateTime.now();
-        LocalDateTime fifteenMinutesLater = now.plusMinutes(15);
+        LocalDateTime fifteenMinutesLater = now.plusMinutes(10);
 
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
@@ -45,7 +45,7 @@ public class SendWatchPartyEmailJob extends QuartzJobBean {
         for (WatchParty watchParty : upcomingWatchParties) {
             String to = watchParty.getAccount().getEmail();
             String subject = "Reminder: Watch Party Starting Soon - " + watchParty.getPartyName();
-            String text = String.format("Your watch party '%s' is starting in 15 minutes! Don't forget to join at %s.",
+            String text = String.format("Your watch party '%s' is starting in 10 minutes! Don't forget to join at %s.",
                     watchParty.getPartyName(), watchParty.getScheduledTime());
 
             emailService.sendSimpleMessage(to, subject, text);
