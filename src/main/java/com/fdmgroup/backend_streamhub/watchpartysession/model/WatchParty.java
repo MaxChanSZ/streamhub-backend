@@ -31,6 +31,7 @@ public class WatchParty {
 
     private String scheduledDate;
     private String scheduledTime;
+
     private LocalDate createdDate;
 
     @ManyToOne(cascade = CascadeType.ALL)
