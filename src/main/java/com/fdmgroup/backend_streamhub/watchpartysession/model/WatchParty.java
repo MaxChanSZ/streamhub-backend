@@ -22,7 +22,7 @@ public class WatchParty {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
-
+    private boolean reminderEmailSent = false;
     private String partyName;
     private String code;
 
