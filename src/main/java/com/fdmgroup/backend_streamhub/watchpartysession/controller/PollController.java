@@ -2,6 +2,7 @@ package com.fdmgroup.backend_streamhub.watchpartysession.controller;
 
 import com.fdmgroup.backend_streamhub.watchpartysession.dto.CreatePollOptionRequest;
 import com.fdmgroup.backend_streamhub.watchpartysession.dto.CreatePollRequest;
+import com.fdmgroup.backend_streamhub.watchpartysession.dto.WatchPartyPollResponse;
 import com.fdmgroup.backend_streamhub.watchpartysession.model.Poll;
 import com.fdmgroup.backend_streamhub.watchpartysession.model.PollOption;
 import com.fdmgroup.backend_streamhub.watchpartysession.service.PollService;
@@ -52,4 +53,11 @@ public class PollController {
        List<PollOption> pollOptionsList = pollService.getPollOptionsByPoll(pollId);
        return ResponseEntity.status(HttpStatus.CREATED).body(pollOptionsList);
     }
+
+    @PostMapping("/get-watchparty-poll-by-code")
+    public ResponseEntity<WatchPartyPollResponse> getWatchPartyPollByCode(@RequestParam("code") String code, @RequestParam("userId") long userId)  {
+        WatchPartyPollResponse response = pollService.getWatchPartyPollResponse(code, userId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
 }
