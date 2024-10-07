@@ -50,7 +50,7 @@ public class TokenService {
 
     // The class below is used to generate a token to be used to authenticate users joining
     // a watch party
-    public String generateToken(String partyCode) {
+    public String generateToken(String partyCode, String role) {
         Instant now = Instant.now();
         System.out.println("Current instant is: " + now);
         System.out.println("Date of instant is: " + Date.from(now));
@@ -60,7 +60,7 @@ public class TokenService {
                 .issuedAt(now)
                 .expiresAt(now.plus(2, ChronoUnit.HOURS))
                 .subject(partyCode)
-                .claim("role", "guest")
+                .claim("role", role)
                 .build();
 
          // String token = encoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
@@ -71,9 +71,11 @@ public class TokenService {
 //                .setExpiration(new Date(System.currentTimeMillis() + 3600000))
 //                .signWith(getSignInKey(), SignatureAlgorithm.HS256)
 //                .compact();
+        System.out.println("Generating token with role: " + role);
         String token = Jwts
                 .builder()
                 .subject(partyCode)
+                .claim("role", role)
                 .issuedAt(Date.from(now))
                 .expiration(Date.from(now.plus(2, ChronoUnit.HOURS)))
                 .signWith(getSignInKey())
@@ -91,6 +93,12 @@ public class TokenService {
         Claims allClaims = extractAllClaims(token);
         String partyCode = allClaims.get("sub").toString();
         return partyCode;
+    }
+
+    public String extractRole(String token) {
+        Claims allClaims = extractAllClaims(token);
+        String role = allClaims.get("role").toString();
+        return role;
     }
 
     private Claims extractAllClaims(String token) {

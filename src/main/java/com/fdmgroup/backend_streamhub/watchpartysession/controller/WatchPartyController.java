@@ -2,6 +2,7 @@ package com.fdmgroup.backend_streamhub.watchpartysession.controller;
 
 import com.fdmgroup.backend_streamhub.authenticate.service.TokenService;
 import com.fdmgroup.backend_streamhub.watchpartysession.dto.CreateWatchPartyRequest;
+import com.fdmgroup.backend_streamhub.watchpartysession.dto.CreateWatchPartyResponse;
 import com.fdmgroup.backend_streamhub.watchpartysession.dto.JoinWatchPartyRequest;
 import com.fdmgroup.backend_streamhub.watchpartysession.dto.JoinWatchPartyResponse;
 import com.fdmgroup.backend_streamhub.watchpartysession.model.WatchParty;
@@ -28,7 +29,7 @@ public class WatchPartyController {
   private final String VIDEO_BASE_URL = "http://localhost:8080/encoded/";
 
   @PostMapping("/create")
-  public ResponseEntity<WatchParty> createWatchParty(
+  public ResponseEntity<CreateWatchPartyResponse> createWatchParty(
           @RequestBody CreateWatchPartyRequest createWatchPartyRequest) {
 
 //    System.out.println(createWatchPartyRequest.getPartyName());
@@ -43,7 +44,18 @@ public class WatchPartyController {
             createWatchPartyRequest.getScheduledTime()
     );
 
-    return ResponseEntity.status(HttpStatus.CREATED).body(watchParty);
+    // generate a token with host privileges to send to the client
+    String token = tokenService.generateToken(watchParty.getCode(), "host");
+
+    CreateWatchPartyResponse response = new CreateWatchPartyResponse();
+    response.setHost(true);
+    response.setToken(token);
+    response.setCode(watchParty.getCode());
+    response.setVideoSource(VIDEO_BASE_URL + watchParty.getVideo().getVideoURL());
+
+    System.out.println(response.toString());
+
+    return ResponseEntity.status(HttpStatus.CREATED).body(response);
   }
 
 
@@ -69,13 +81,14 @@ public class WatchPartyController {
     }
 
     // generate a token which contains the watch party information and return it to the user
-    String token = tokenService.generateToken(code);
+    String token = tokenService.generateToken(code, "guest");
 
     JoinWatchPartyResponse response = new JoinWatchPartyResponse();
     response.setToken(token);
     response.setHost(false);
     response.setVideoSource(VIDEO_BASE_URL + watchParty.getVideo().getVideoURL());
     response.setRoomId(code);
+    System.out.println(response.toString());
 
     return ResponseEntity.ok(response);
   }
@@ -92,4 +105,3 @@ public class WatchPartyController {
     return ResponseEntity.ok(watchParties);
   }
 }
-

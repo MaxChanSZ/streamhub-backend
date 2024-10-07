@@ -24,12 +24,19 @@ public class VideoSyncController {
     public void handleVideoSyncAction(VideoAction action, SimpMessageHeaderAccessor headerAccessor) {
         // verify that the message received is from an authorised source
         String partyCode = (String) headerAccessor.getSessionAttributes().get("partyCode");
-
+        String role = (String) headerAccessor.getSessionAttributes().get("role");
         if ( !action.getSessionId().equals(partyCode) ) {
             throw new AccessDeniedException("Unauthorised to send messages in this chat room");
         } else {
             System.out.println("Session ID matches");
             System.out.println(partyCode);
+        }
+
+        if ( !role.equals("host") ) {
+            System.out.println("Person is not host");
+            throw new AccessDeniedException("Unauthorised to control video synchronisation");
+        } else {
+            System.out.println("Host is allowed to send video sync messages");
         }
 
         // when the video sync message is received, send it to the kafka topic

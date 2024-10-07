@@ -39,6 +39,8 @@ public class WebSocketHandshakeInterceptor implements HandshakeInterceptor {
             if ( tokenService.isValidToken(token, partyCode) ) {
                 // System.out.println("Token is valid");
                 attributes.put("partyCode", partyCode);
+                System.out.println("Setting user role to: " + tokenService.extractRole(token));
+                attributes.put("role", tokenService.extractRole(token));
                 return true;
             }
         }
