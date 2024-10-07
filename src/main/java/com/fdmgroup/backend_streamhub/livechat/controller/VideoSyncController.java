@@ -32,12 +32,13 @@ public class VideoSyncController {
             System.out.println(partyCode);
         }
 
-        if ( !role.equals("host") ) {
-            System.out.println("Person is not host");
-            throw new AccessDeniedException("Unauthorised to control video synchronisation");
-        } else {
-            System.out.println("Host is allowed to send video sync messages");
-        }
+        // TODO Uncomment this when host control needs to be reactivated
+//        if ( !role.equals("host") ) {
+//            System.out.println("Person is not host");
+//            throw new AccessDeniedException("Unauthorised to control video synchronisation");
+//        } else {
+//            System.out.println("Host is allowed to send video sync messages");
+//        }
 
         // when the video sync message is received, send it to the kafka topic
         // the listener will perform the relevant action of distributing the message
