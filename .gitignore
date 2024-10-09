@@ -20,6 +20,10 @@ target/
 *.iml
 *.ipr
 
+# Ignore application.properties files
+**/src/main/resources/application.properties
+
+
 ### NetBeans ###
 /nbproject/private/
 /nbbuild/
