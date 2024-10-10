@@ -31,8 +31,8 @@ public class PollService {
     @Autowired
     AccountRepository accountRepository;
 
-    public Poll createPoll(Long watchPartyId, String question) {
-        Optional<WatchParty> watchParty = watchPartyRepository.findById(watchPartyId);
+    public Poll createPoll(String code, String question) {
+        Optional<WatchParty> watchParty = watchPartyRepository.findByCode(code);
 
         if (watchParty.isPresent()) {
             Poll poll = new Poll();
