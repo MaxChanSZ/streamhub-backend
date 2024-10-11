@@ -7,14 +7,24 @@ import com.stripe.model.checkout.Session;
 import com.stripe.param.*;
 import com.stripe.param.checkout.SessionCreateParams;
 import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Value;
+import externalServices.stripe_service.repository.UserRepository;
+import com.fdmgroup.backend_streamhub.authenticate.model.Account;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class StripeService {
 
     @Value("${stripe.api.key}")
     private String apiKey;
+
+    @Autowired
+    private UserRepository userRepository;
 
     public StripeService() {
     }
@@ -24,58 +34,18 @@ public class StripeService {
         Stripe.apiKey = this.apiKey;
     }
 
-    public Customer createCustomer(String email, String token) throws StripeException {
-        CustomerCreateParams params = CustomerCreateParams.builder()
+    public String getCustomerIdByEmail(String email) throws StripeException {
+        CustomerListParams params = CustomerListParams.builder()
                 .setEmail(email)
-                .setSource(token)
                 .build();
+        CustomerCollection customers = Customer.list(params);
 
-        return Customer.create(params);
+        if (!customers.getData().isEmpty()) {
+            return customers.getData().get(0).getId();
+        }
+        return null;
     }
 
-    public Charge createCharge(String customerId, long amount, String currency) throws StripeException {
-        ChargeCreateParams params = ChargeCreateParams.builder()
-                .setAmount(amount)
-                .setCurrency(currency)
-                .setCustomer(customerId)
-                .build();
-
-        return Charge.create(params);
-    }
-
-    public PaymentIntent createPaymentIntent(long amount, String currency) throws StripeException {
-        PaymentIntentCreateParams params = PaymentIntentCreateParams.builder()
-                .setAmount(amount)
-                .setCurrency(currency)
-                .build();
-
-        return PaymentIntent.create(params);
-    }
-
-    public Customer getCustomer(String customerId) throws StripeException {
-        return Customer.retrieve(customerId);
-    }
-
-    public Charge getCharge(String chargeId) throws StripeException {
-        return Charge.retrieve(chargeId);
-    }
-
-    public PaymentIntent getPaymentIntent(String paymentIntentId) throws StripeException {
-        return PaymentIntent.retrieve(paymentIntentId);
-    }
-
-    public Subscription createSubscription(String customerId, String priceId) throws StripeException {
-        SubscriptionCreateParams params = SubscriptionCreateParams.builder()
-                .setCustomer(customerId)
-                .addItem(
-                        SubscriptionCreateParams.Item.builder()
-                                .setPrice(priceId)
-                                .build()
-                )
-                .build();
-
-        return Subscription.create(params);
-    }
 
     public Subscription getSubscription(String subscriptionId) throws StripeException {
         return Subscription.retrieve(subscriptionId);
@@ -104,21 +74,15 @@ public class StripeService {
     }
 
     public Session createMonthlySubscription(String email, String successUrl, String cancelUrl) throws StripeException {
-        ProductCreateParams productParams = ProductCreateParams.builder()
-                .setName("Premium Subscription")
-                .setType(ProductCreateParams.Type.SERVICE)
-                .build();
-        Product product = Product.create(productParams);
-
         PriceCreateParams priceParams = PriceCreateParams.builder()
-                .setUnitAmount(499L)
+                .setUnitAmount(499L)  // $4.99 in cents
                 .setCurrency("usd")
                 .setRecurring(
                         PriceCreateParams.Recurring.builder()
                                 .setInterval(PriceCreateParams.Recurring.Interval.MONTH)
                                 .build()
                 )
-                .setProduct(product.getId())
+                .setProduct("prod_R0Zhc0fSEIWByQ")
                 .build();
         Price price = Price.create(priceParams);
 
@@ -137,7 +101,57 @@ public class StripeService {
 
         return Session.create(params);
     }
+
+    public Subscription getActiveSubscription(String customerId) throws StripeException {
+        CustomerRetrieveParams params = CustomerRetrieveParams.builder()
+                .addExpand("subscriptions")
+                .build();
+        Customer customer = Customer.retrieve(customerId, params, null);
+
+        SubscriptionCollection subscriptions = customer.getSubscriptions();
+        if (subscriptions != null && !subscriptions.getData().isEmpty()) {
+            return subscriptions.getData().get(0);
+        }
+        return null;
+    }
+
+    public String createOrGetCustomer(String email) throws StripeException {
+        CustomerListParams params = CustomerListParams.builder()
+                .setEmail(email)
+                .build();
+        CustomerCollection customers = Customer.list(params);
+
+        if (!customers.getData().isEmpty()) {
+            return customers.getData().get(0).getId();
+        } else {
+            CustomerCreateParams createParams = CustomerCreateParams.builder()
+                    .setEmail(email)
+                    .build();
+            Customer newCustomer = Customer.create(createParams);
+            return newCustomer.getId();
+        }
+    }
+
+    public Map<String, Object> getUserInfo(Long id) {
+        Optional<Account> userOptional = userRepository.findById(id);
+        if (userOptional.isPresent()) {
+            Account user = userOptional.get();
+            Map<String, Object> userInfo = new HashMap<>();
+            userInfo.put("id", user.getId());
+            userInfo.put("username", user.getUsername());
+            userInfo.put("email", user.getEmail());
+            return userInfo;
+        } else {
+            throw new RuntimeException("User not found");
+        }
+    }
+
+    public Optional<Account> findUserByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
 }
+
+
 
 
 
