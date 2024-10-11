@@ -103,4 +103,10 @@ public class WatchPartyController {
     List<WatchParty> watchParties = watchPartyService.getAllWatchParties();
     return ResponseEntity.ok(watchParties);
   }
+
+  @GetMapping("/get/with-poll")
+  public ResponseEntity<List<WatchParty>> getAllWatchPartiesWithPoll() {
+    List<WatchParty> watchParties = watchPartyService.getAllWatchPartiesWithPoll();
+    return ResponseEntity.ok(watchParties);
+  }
 }

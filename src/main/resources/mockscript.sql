@@ -15,4 +15,4 @@ INSERT INTO series (id, cast, description, rating, release_date, series_title, t
 INSERT INTO series (id, cast, description, rating, release_date, series_title, thumbnailurl) VALUES (1009, 'Frank Sinatra', 'detective movie', '42', '19540101', 'Suddenly', 'suddenly_001.jpg');
 
 SELECT * FROM video;
-INSERT INTO video (id, description, duration_second, episode, release_date, thumbnailurl, video_title, videourl, series_id) VALUES (1000, 'first episode of steamboat willie', 460, 1, '20200101', 'steamboatwillie_001.jpg', 'steamboat willie first episode', 'steamboatwillie_001.m3u8', 1000);
+INSERT INTO video (id, description, duration_second, episode, release_date, thumbnailurl, video_title, videourl, series_id) VALUES (1, 'first episode of steamboat willie', 460, 1, '20200101', 'steamboatwillie_001.jpg', 'steamboat willie first episode', 'steamboatwillie_001.m3u8', 1000);

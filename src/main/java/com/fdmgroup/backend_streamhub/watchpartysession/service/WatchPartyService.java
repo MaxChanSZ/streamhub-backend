@@ -2,7 +2,6 @@ package com.fdmgroup.backend_streamhub.watchpartysession.service;
 
 import com.fdmgroup.backend_streamhub.authenticate.model.Account;
 import com.fdmgroup.backend_streamhub.authenticate.repository.AccountRepository;
-import com.fdmgroup.backend_streamhub.videostream.repository.IVideoRepository;
 import com.fdmgroup.backend_streamhub.videostream.service.VideoService;
 import com.fdmgroup.backend_streamhub.watchpartysession.model.WatchParty;
 import com.fdmgroup.backend_streamhub.watchpartysession.repository.IWatchPartyRepository;
@@ -60,6 +59,10 @@ public class WatchPartyService {
         } else {
             throw new RuntimeException("Account not found");
         }
+    }
+
+    public List<WatchParty> getAllWatchPartiesWithPoll() {
+        return watchPartyRepository.findWatchPartiesWithPoll();
     }
 }
 
