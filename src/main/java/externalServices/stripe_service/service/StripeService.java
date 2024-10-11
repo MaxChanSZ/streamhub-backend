@@ -6,7 +6,9 @@ import com.stripe.model.*;
 import com.stripe.model.checkout.Session;
 import com.stripe.param.*;
 import com.stripe.param.checkout.SessionCreateParams;
+import org.springframework.stereotype.Service;
 
+@Service
 public class StripeService {
 
     public StripeService(String apiKey) {
