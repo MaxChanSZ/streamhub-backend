@@ -29,19 +29,14 @@ public class PaymentController {
         this.stripeService = stripeService;
     }
 
-    @PostMapping("/create-checkout-session")
-    public ResponseEntity<?> createCheckoutSession(@RequestBody Map<String, String> payload) {
+    @PostMapping("/create-subscription")
+    public ResponseEntity<?> createSubscription(@RequestBody Map<String, String> payload) {
         String email = payload.get("email");
-        String priceId = payload.get("priceId");
 
         try {
-            // Create a customer
-            Customer customer = stripeService.createCustomer(email, null);
-
-            // Create a Checkout Session
-            String successUrl = "https://localhost:8080/success";
-            String cancelUrl = "https://localhost:8080/cancel";
-            Session session = stripeService.createCheckoutSession(priceId, successUrl, cancelUrl);
+            String successUrl = "http://localhost:8080/success";
+            String cancelUrl = "http://localhost:8080/cancel";
+            Session session = stripeService.createMonthlySubscription(email, successUrl, cancelUrl);
 
             Map<String, String> responseData = new HashMap<>();
             responseData.put("sessionId", session.getId());
@@ -49,7 +44,8 @@ public class PaymentController {
 
             return ResponseEntity.ok(responseData);
         } catch (StripeException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error creating checkout session: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error creating subscription: " + e.getMessage());
         }
     }
 
@@ -107,4 +103,5 @@ public class PaymentController {
         }
     }
 }
+
 
