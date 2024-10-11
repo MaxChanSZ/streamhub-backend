@@ -64,5 +64,26 @@ public class WatchPartyService {
     public List<WatchParty> getAllWatchPartiesWithPoll() {
         return watchPartyRepository.findWatchPartiesWithPoll();
     }
+
+    public WatchParty updateWatchParty(String partyName, Long accountID, String scheduledDate, String scheduledTime, Long watchPartyId) {
+
+        Optional<Account> account = accountRepository.findById(accountID);
+        if (account.isPresent()) {
+            Optional<WatchParty> watchParty = watchPartyRepository.findById(watchPartyId);
+            if (watchParty.isPresent()) {
+                WatchParty updatedWatchParty = watchParty.get();
+                updatedWatchParty.setPartyName(partyName);
+                updatedWatchParty.setScheduledDate(scheduledDate);
+                updatedWatchParty.setScheduledTime(scheduledTime);
+                return watchPartyRepository.save(updatedWatchParty);
+
+            } else {
+                throw new RuntimeException("Watchparty not found");
+            }
+
+        } else {
+            throw new RuntimeException("Account not found");
+        }
+    }
 }
 

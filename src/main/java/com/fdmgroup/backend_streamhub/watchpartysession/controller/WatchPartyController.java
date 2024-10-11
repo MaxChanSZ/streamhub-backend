@@ -1,10 +1,7 @@
 package com.fdmgroup.backend_streamhub.watchpartysession.controller;
 
 import com.fdmgroup.backend_streamhub.authenticate.service.TokenService;
-import com.fdmgroup.backend_streamhub.watchpartysession.dto.CreateWatchPartyRequest;
-import com.fdmgroup.backend_streamhub.watchpartysession.dto.CreateWatchPartyResponse;
-import com.fdmgroup.backend_streamhub.watchpartysession.dto.JoinWatchPartyRequest;
-import com.fdmgroup.backend_streamhub.watchpartysession.dto.JoinWatchPartyResponse;
+import com.fdmgroup.backend_streamhub.watchpartysession.dto.*;
 import com.fdmgroup.backend_streamhub.watchpartysession.model.WatchParty;
 import com.fdmgroup.backend_streamhub.watchpartysession.service.WatchPartyService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,10 +28,6 @@ public class WatchPartyController {
   @PostMapping("/create")
   public ResponseEntity<CreateWatchPartyResponse> createWatchParty(
           @RequestBody CreateWatchPartyRequest createWatchPartyRequest) {
-
-//    System.out.println(createWatchPartyRequest.getPartyName());
-//    System.out.println(createWatchPartyRequest.getAccountID());
-//    System.out.println(createWatchPartyRequest.getPassword());
 
     WatchParty watchParty = watchPartyService.createWatchParty(
             createWatchPartyRequest.getPartyName(),
@@ -109,4 +102,20 @@ public class WatchPartyController {
     List<WatchParty> watchParties = watchPartyService.getAllWatchPartiesWithPoll();
     return ResponseEntity.ok(watchParties);
   }
+
+  @PostMapping("/update")
+  public ResponseEntity<WatchParty> updateWatchParty(
+          @RequestBody UpdateWatchPartyRequest updateWatchPartyRequest) {
+
+    WatchParty watchParty = watchPartyService.updateWatchParty(
+            updateWatchPartyRequest.getPartyName(),
+            updateWatchPartyRequest.getAccountId(),
+            updateWatchPartyRequest.getScheduledDate(),
+            updateWatchPartyRequest.getScheduledTime(),
+            updateWatchPartyRequest.getWatchPartyId()
+    );
+
+    return ResponseEntity.status(HttpStatus.CREATED).body(watchParty);
+  }
+
 }
