@@ -1,7 +1,7 @@
 package com.fdmgroup.backend_streamhub.quartz_scheduler.jobs;
 
 import com.fdmgroup.backend_streamhub.watchpartysession.model.WatchParty;
-import com.fdmgroup.backend_streamhub.watchpartysession.repository.WatchPartyRepository;
+import com.fdmgroup.backend_streamhub.watchpartysession.repository.IWatchPartyRepository;
 import externalServices.email_service.service.EmailServiceImpl;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -18,7 +18,7 @@ import java.util.List;
 public class SendWatchPartyEmailJob extends QuartzJobBean {
 
     @Autowired
-    private WatchPartyRepository watchPartyRepository;
+    private IWatchPartyRepository watchPartyRepository;
 
     @Autowired
     private EmailServiceImpl emailService;
@@ -27,14 +27,14 @@ public class SendWatchPartyEmailJob extends QuartzJobBean {
     @Transactional
     protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
         LocalDateTime now = LocalDateTime.now();
-        LocalDateTime fifteenMinutesLater = now.plusMinutes(10);
+        LocalDateTime tenMinutesLater = now.plusMinutes(10);
 
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
 
         String currentDate = now.format(dateFormatter);
         String startTime = now.format(timeFormatter);
-        String endTime = fifteenMinutesLater.format(timeFormatter);
+        String endTime = tenMinutesLater.format(timeFormatter);
 
         List<WatchParty> upcomingWatchParties = watchPartyRepository.findByScheduledDateAndScheduledTimeBetweenAndReminderEmailSentFalse(
                 currentDate,

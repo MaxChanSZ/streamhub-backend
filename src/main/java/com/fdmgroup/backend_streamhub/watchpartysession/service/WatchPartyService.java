@@ -2,7 +2,6 @@ package com.fdmgroup.backend_streamhub.watchpartysession.service;
 
 import com.fdmgroup.backend_streamhub.authenticate.model.Account;
 import com.fdmgroup.backend_streamhub.authenticate.repository.AccountRepository;
-import com.fdmgroup.backend_streamhub.videostream.repository.IVideoRepository;
 import com.fdmgroup.backend_streamhub.videostream.service.VideoService;
 import com.fdmgroup.backend_streamhub.watchpartysession.model.WatchParty;
 import com.fdmgroup.backend_streamhub.watchpartysession.repository.IWatchPartyRepository;
@@ -57,6 +56,50 @@ public class WatchPartyService {
         Optional<Account> account = accountRepository.findById(userId);
         if (account.isPresent()) {
             return watchPartyRepository.findByAccount(account.get());
+        } else {
+            throw new RuntimeException("Account not found");
+        }
+    }
+
+    public List<WatchParty> getAllWatchPartiesWithPoll() {
+        return watchPartyRepository.findWatchPartiesWithPoll();
+    }
+
+    public WatchParty updateWatchParty(String partyName, Long accountID, String scheduledDate, String scheduledTime, Long watchPartyId) {
+
+        Optional<Account> account = accountRepository.findById(accountID);
+        if (account.isPresent()) {
+            Optional<WatchParty> watchParty = watchPartyRepository.findById(watchPartyId);
+            if (watchParty.isPresent()) {
+                WatchParty updatedWatchParty = watchParty.get();
+                updatedWatchParty.setPartyName(partyName);
+                updatedWatchParty.setScheduledDate(scheduledDate);
+                updatedWatchParty.setScheduledTime(scheduledTime);
+                return watchPartyRepository.save(updatedWatchParty);
+
+            } else {
+                throw new RuntimeException("Watchparty not found");
+            }
+
+        } else {
+            throw new RuntimeException("Account not found");
+        }
+    }
+
+    public WatchParty updateWatchPartyPassword(String password, Long accountID, Long watchPartyId) {
+
+        Optional<Account> account = accountRepository.findById(accountID);
+        if (account.isPresent()) {
+            Optional<WatchParty> watchParty = watchPartyRepository.findById(watchPartyId);
+            if (watchParty.isPresent()) {
+                WatchParty updatedWatchParty = watchParty.get();
+                updatedWatchParty.setPassword(password);
+                return watchPartyRepository.save(updatedWatchParty);
+
+            } else {
+                throw new RuntimeException("Watchparty not found");
+            }
+
         } else {
             throw new RuntimeException("Account not found");
         }

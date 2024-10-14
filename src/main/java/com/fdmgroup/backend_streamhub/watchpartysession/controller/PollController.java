@@ -27,7 +27,7 @@ public class PollController {
         if (createPollRequest != null) {
             // create poll first
             poll = pollService.createPoll(
-                    createPollRequest.getWatchPartyID(),
+                    createPollRequest.getPartyCode(),
                     createPollRequest.getQuestion()
             );
             if (poll != null) {
