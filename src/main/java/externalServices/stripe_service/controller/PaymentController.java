@@ -1,47 +1,59 @@
 package externalServices.stripe_service.controller;
 
-import com.stripe.exception.SignatureVerificationException;
 import com.stripe.exception.StripeException;
 import com.stripe.model.*;
 import com.stripe.model.checkout.Session;
-import com.stripe.net.Webhook;
 import externalServices.stripe_service.service.StripeService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/payment")
 public class PaymentController {
     private final StripeService stripeService;
 
-    @Value("${stripe.webhook.secret}")
-    private String webhookSecret;
-
     @Autowired
     public PaymentController(StripeService stripeService) {
         this.stripeService = stripeService;
     }
 
-    @PostMapping("/create-checkout-session")
-    public ResponseEntity<?> createCheckoutSession(@RequestBody Map<String, String> payload) {
+    @GetMapping("/user/{id}")
+    public ResponseEntity<?> getUserInfo(@PathVariable Long id) {
+        try {
+            Map<String, Object> userInfo = stripeService.getUserInfo(id);
+            return ResponseEntity.ok(userInfo);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error fetching user information: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/create-or-get-customer")
+    public ResponseEntity<?> createOrGetCustomer(@RequestBody Map<String, String> payload) {
         String email = payload.get("email");
-        String priceId = payload.get("priceId");
 
         try {
-            // Create a customer
-            Customer customer = stripeService.createCustomer(email, null);
+            String customerId = stripeService.createOrGetCustomer(email);
+            return ResponseEntity.ok(Map.of("customerId", customerId));
+        } catch (StripeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error creating or getting customer: " + e.getMessage());
+        }
+    }
 
-            // Create a Checkout Session
-            String successUrl = "https://localhost:8080/success";
-            String cancelUrl = "https://localhost:8080/cancel";
-            Session session = stripeService.createCheckoutSession(priceId, successUrl, cancelUrl);
+    @PostMapping("/create-subscription")
+    public ResponseEntity<?> createSubscription(@RequestBody Map<String, String> payload) {
+        String email = payload.get("email");
+
+        try {
+            String successUrl = "http://localhost:5173/update-profile";
+            String cancelUrl = "http://localhost:5173/update-profile";
+            Session session = stripeService.createMonthlySubscription(email, successUrl, cancelUrl);
 
             Map<String, String> responseData = new HashMap<>();
             responseData.put("sessionId", session.getId());
@@ -49,39 +61,46 @@ public class PaymentController {
 
             return ResponseEntity.ok(responseData);
         } catch (StripeException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error creating checkout session: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error creating subscription: " + e.getMessage());
         }
     }
 
-    @PostMapping("/webhook")
-    public ResponseEntity<?> handleStripeWebhook(@RequestBody String payload, @RequestHeader("Stripe-Signature") String sigHeader) {
+    @GetMapping("/subscription/status")
+    public ResponseEntity<?> getSubscriptionStatus(@RequestParam String email) {
         try {
-            Event event = Webhook.constructEvent(payload, sigHeader, webhookSecret);
-
-            // Handle the event
-            if ("checkout.session.completed".equals(event.getType())) {
-                EventDataObjectDeserializer dataObjectDeserializer = event.getDataObjectDeserializer();
-                Optional<StripeObject> optionalSession = dataObjectDeserializer.getObject();
-
-                if (optionalSession.isPresent()) {
-                    Session session = (Session) optionalSession.get();
-                    handleSuccessfulPayment(session);
-                } else {
-                    System.out.println("Deserialization failed for checkout.session.completed event");
-                }
+            String customerId = stripeService.createOrGetCustomer(email);
+            Subscription subscription = stripeService.getActiveSubscription(customerId);
+            if (subscription != null) {
+                Map<String, Object> status = new HashMap<>();
+                status.put("status", subscription.getStatus());
+                status.put("currentPeriodEnd", subscription.getCurrentPeriodEnd());
+                status.put("subscriptionId", subscription.getId());
+                return ResponseEntity.ok(status);
             } else {
-                System.out.println("Unhandled event type: " + event.getType());
+                return ResponseEntity.ok(Map.of("status", "inactive"));
             }
+        } catch (StripeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error fetching subscription status: " + e.getMessage());
+        }
+    }
 
-            return ResponseEntity.ok().build();
-        } catch (SignatureVerificationException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid signature");
+
+    @PostMapping("/cancel-subscription")
+    public ResponseEntity<?> cancelSubscription(@RequestBody Map<String, String> payload) {
+        String subscriptionId = payload.get("subscriptionId");
+
+        try {
+            Subscription canceledSubscription = stripeService.cancelSubscription(subscriptionId);
+            return ResponseEntity.ok(Map.of("status", canceledSubscription.getStatus()));
+        } catch (StripeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error canceling subscription: " + e.getMessage());
         }
     }
 
     private void handleSuccessfulPayment(Session session) {
-        // Retrieve the session and perform any necessary actions
-        // (e.g., update your database, send a confirmation email, etc.)
         String customerId = session.getCustomer();
         String subscriptionId = session.getSubscription();
 
@@ -94,17 +113,8 @@ public class PaymentController {
             System.err.println("Error handling successful payment: " + e.getMessage());
         }
     }
-
-    @PostMapping("/cancel-subscription")
-    public ResponseEntity<?> cancelSubscription(@RequestBody Map<String, String> payload) {
-        String subscriptionId = payload.get("subscriptionId");
-
-        try {
-            Subscription canceledSubscription = stripeService.cancelSubscription(subscriptionId);
-            return ResponseEntity.ok("Subscription canceled successfully");
-        } catch (StripeException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error canceling subscription: " + e.getMessage());
-        }
-    }
 }
+
+
+
 
