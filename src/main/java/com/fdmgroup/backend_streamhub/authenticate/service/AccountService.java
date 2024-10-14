@@ -1,182 +1,188 @@
 package com.fdmgroup.backend_streamhub.authenticate.service;
 
-
-import com.fdmgroup.backend_streamhub.authenticate.model.Account;
-import com.fdmgroup.backend_streamhub.authenticate.repository.AccountRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.stereotype.Service;
 import com.fdmgroup.backend_streamhub.authenticate.dto.LoginRequest;
 import com.fdmgroup.backend_streamhub.authenticate.dto.RegistrationRequest;
 import com.fdmgroup.backend_streamhub.authenticate.exceptions.*;
+import com.fdmgroup.backend_streamhub.authenticate.model.Account;
+import com.fdmgroup.backend_streamhub.authenticate.repository.AccountRepository;
+import java.util.Optional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
 
 @Service
 public class AccountService {
 
-    private static final Logger accountServiceLogger = LogManager.getLogger(AccountService.class);
+  private static final Logger accountServiceLogger = LogManager.getLogger(AccountService.class);
 
-    @Autowired
-    private AccountRepository accountRepository;
-    private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(16);
+  @Autowired private AccountRepository accountRepository;
+  private final BCryptPasswordEncoder oldEncoder = new BCryptPasswordEncoder(16);
+  private final BCryptPasswordEncoder newEncoder = new BCryptPasswordEncoder(10);
 
+  public AccountService() {
+    this.accountRepository = accountRepository;
+  }
 
-    public AccountService() {
-        this.accountRepository = accountRepository;
+  public Account updateAccount(Account accountToUpdate) {
+    return accountRepository
+        .findById(accountToUpdate.getId())
+        .map(
+            existingAccount -> {
+              existingAccount.setUsername(accountToUpdate.getUsername());
+              existingAccount.setEmail(accountToUpdate.getEmail());
+              existingAccount.setPassword(newEncoder.encode(accountToUpdate.getPassword()));
+              return accountRepository.save(existingAccount);
+            })
+        .orElse(null); // Account not found
+  }
+
+  public boolean deleteAccount(long accountId) {
+    return accountRepository
+        .findById(accountId)
+        .map(
+            account -> {
+              accountRepository.delete(account);
+              return true; // Account deleted successfully
+            })
+        .orElse(false); // Account not found
+  }
+
+  public Account loginUser(LoginRequest loginRequest)
+      throws UsernameNotFoundException, IncorrectPasswordException {
+    accountServiceLogger.info("Login attempt | {}", loginRequest.toString());
+
+    // Retrieve an account by username.
+    Optional<Account> accountOptional =
+        accountRepository.findByUsername(loginRequest.getUsername());
+
+    // Unsuccessful login due to incorrect username.
+    if (accountOptional.isEmpty()) {
+      accountServiceLogger.error("Unsuccessful login as username entered not found.");
+      throw new UsernameNotFoundException();
     }
 
+    Account account = accountOptional.get();
 
-    public Account updateAccount(Account accountToUpdate) {
-        return accountRepository.findById(accountToUpdate.getId())
-                .map(existingAccount -> {
-                    existingAccount.setUsername(accountToUpdate.getUsername());
-                    existingAccount.setEmail(accountToUpdate.getEmail());
-                    existingAccount.setPassword(accountToUpdate.getPassword());
-                    return accountRepository.save(existingAccount);
-                })
-                .orElse(null); // Account not found
+    boolean passwordMatches =
+        newEncoder.matches(loginRequest.getPassword(), account.getPassword())
+            || oldEncoder.matches(loginRequest.getPassword(), account.getPassword());
+
+    // Unsuccessful login due to incorrect password.
+    if (!passwordMatches) {
+      accountServiceLogger.error("Unsuccessful login due to incorrect password.");
+      throw new IncorrectPasswordException();
+    }
+    accountServiceLogger.info("Successful login | {}", loginRequest.toString());
+    return account;
+  }
+
+  public Account registerUser(RegistrationRequest registrationRequest)
+      throws InvalidUsernameException,
+          InvalidEmailAddressException,
+          InvalidPasswordException,
+          UnavailableUsernameException,
+          UnavailableEmailAddressException {
+    accountServiceLogger.info("Registration attempt | {}", registrationRequest.toString());
+
+    String username = registrationRequest.getUsername();
+    String email = registrationRequest.getEmail();
+    String password = newEncoder.encode(registrationRequest.getPassword());
+
+    if (!isValidUsername(username)) {
+      throw new InvalidUsernameException();
     }
 
-    public boolean deleteAccount(long accountId) {
-        return accountRepository.findById(accountId)
-                .map(account -> {
-                    accountRepository.delete(account);
-                    return true; // Account deleted successfully
-                })
-                .orElse(false); // Account not found
+    if (!isValidEmailAddress(email)) {
+      throw new InvalidEmailAddressException();
     }
 
-    public Account loginUser(LoginRequest loginRequest) throws  UsernameNotFoundException,
-                                                                IncorrectPasswordException {
-        accountServiceLogger.info("Login attempt | {}", loginRequest.toString());
-
-        // Retrieve an account by username.
-        Optional<Account> accountOptional = accountRepository.findByUsername(loginRequest.getUsername());
-
-       // Unsuccessful login due to incorrect username.
-       if (accountOptional.isEmpty()) {
-           accountServiceLogger.error("Unsuccessful login as username entered not found.");
-           throw new UsernameNotFoundException();
-       }
-
-       Account account = accountOptional.get();
-
-       // Unsuccessful login due to incorrect password.
-       if (!encoder.matches(loginRequest.getPassword(), account.getPassword())) {
-           accountServiceLogger.error("Unsuccessful login due to incorrect password.");
-           throw new IncorrectPasswordException();
-       }
-       accountServiceLogger.info("Successful login | {}", loginRequest.toString());
-       return account;
+    if (!isValidPassword(password)) {
+      throw new InvalidPasswordException();
     }
 
-
-    public Account registerUser(RegistrationRequest registrationRequest) throws     InvalidUsernameException,
-                                                                                    InvalidEmailAddressException,
-                                                                                    InvalidPasswordException,
-                                                                                    UnavailableUsernameException,
-                                                                                    UnavailableEmailAddressException {
-        accountServiceLogger.info("Registration attempt | {}", registrationRequest.toString());
-
-        String username = registrationRequest.getUsername();
-        String email = registrationRequest.getEmail();
-        String password = encoder.encode(registrationRequest.getPassword());
-
-        if (!isValidUsername(username)) {
-            throw new InvalidUsernameException();
-        }
-
-        if (!isValidEmailAddress(email)) {
-            throw new InvalidEmailAddressException();
-        }
-
-        if (!isValidPassword(password)) {
-            throw new InvalidPasswordException();
-        }
-
-        if (!isUsernameAvailable(username)) {
-            throw new UnavailableUsernameException();
-        }
-
-        if (!isEmailAddressAvailable(email)) {
-            throw new UnavailableEmailAddressException();
-        }
-
-        Account account = new Account(username, email, password);
-        accountRepository.save(account);
-        accountServiceLogger.info("Successful registration | {}", account.toString());
-        return account;
+    if (!isUsernameAvailable(username)) {
+      throw new UnavailableUsernameException();
     }
 
-    //ping user checks that a user exists and returns the user, or null if user does not exist.
-    public Account pingUser(RegistrationRequest registrationRequest) {
-        accountServiceLogger.info("Pinging user | {}", registrationRequest.toString());
-
-        Optional<Account> accountOptional = accountRepository.findByUsername(registrationRequest.getUsername());
-
-        if (accountOptional.isPresent()) {
-            accountServiceLogger.info("User {} found.", registrationRequest.getUsername());
-            return accountOptional.get();
-        }
-        accountServiceLogger.info("User {} not found.", registrationRequest.getUsername());
-        return null;
+    if (!isEmailAddressAvailable(email)) {
+      throw new UnavailableEmailAddressException();
     }
 
-    private boolean isEmailAddressAvailable(String email) {
-        return accountRepository.findByEmail(email).isEmpty();
+    Account account = new Account(username, email, password);
+    accountRepository.save(account);
+    accountServiceLogger.info("Successful registration | {}", account.toString());
+    return account;
+  }
+
+  // ping user checks that a user exists and returns the user, or null if user does not exist.
+  public Account pingUser(RegistrationRequest registrationRequest) {
+    accountServiceLogger.info("Pinging user | {}", registrationRequest.toString());
+
+    Optional<Account> accountOptional =
+        accountRepository.findByUsername(registrationRequest.getUsername());
+
+    if (accountOptional.isPresent()) {
+      accountServiceLogger.info("User {} found.", registrationRequest.getUsername());
+      return accountOptional.get();
+    }
+    accountServiceLogger.info("User {} not found.", registrationRequest.getUsername());
+    return null;
+  }
+
+  private boolean isEmailAddressAvailable(String email) {
+    return accountRepository.findByEmail(email).isEmpty();
+  }
+
+  private boolean isUsernameAvailable(String username) {
+    return accountRepository.findByUsername(username).isEmpty();
+  }
+
+  private boolean isValidPassword(String password) {
+    if (password.length() < 8) {
+      return false;
     }
 
-    private boolean isUsernameAvailable(String username) {
-        return accountRepository.findByUsername(username).isEmpty();
+    int numberOfUppercaseLetters = 0;
+    int numberOfNumbers = 0;
+    int numberOfSpecialCharacters = 0;
+    for (int i = 0; i < password.length(); i++) {
+      char character = password.charAt(i);
+      if (Character.isUpperCase(character)) {
+        numberOfUppercaseLetters++;
+      }
+      if (Character.isDigit(character)) {
+        numberOfNumbers++;
+      }
+      if (!Character.isLetterOrDigit(character)) {
+        numberOfSpecialCharacters++;
+      }
     }
 
-    private boolean isValidPassword(String password) {
-        if (password.length() < 8) {
-            return false;
-        }
+    return numberOfUppercaseLetters >= 1 && numberOfNumbers >= 1 && numberOfSpecialCharacters >= 1;
+  }
 
-        int numberOfUppercaseLetters = 0;
-        int numberOfNumbers = 0;
-        int numberOfSpecialCharacters = 0;
-        for (int i = 0; i < password.length(); i++) {
-            char character = password.charAt(i);
-            if (Character.isUpperCase(character)) {
-                numberOfUppercaseLetters++;
-            }
-            if (Character.isDigit(character)) {
-                numberOfNumbers++;
-            }
-            if (!Character.isLetterOrDigit(character)) {
-                numberOfSpecialCharacters++;
-            }
-        }
+  private boolean isValidEmailAddress(String email) {
+    if (email == null) {
+      return false;
+    }
+    String trimmedEmail = email.trim();
+    // Regex pattern for basic email validation
+    return trimmedEmail.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
+  }
 
-        return numberOfUppercaseLetters >= 1 && numberOfNumbers >=1 && numberOfSpecialCharacters >= 1;
+  private boolean isValidUsername(String username) {
+    String[] word = username.split(" ");
+    if (word.length != 1) {
+      return false;
     }
 
-    private boolean isValidEmailAddress(String email) {
-        if (email == null) {
-            return false;
-        }
-        String trimmedEmail = email.trim();
-        // Regex pattern for basic email validation
-        return trimmedEmail.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
+    int numberOfCharacters = 0;
+    for (int i = 0; i < username.length(); i++) {
+      numberOfCharacters++;
     }
 
-    private boolean isValidUsername(String username) {
-        String[] word = username.split(" ");
-        if (word.length != 1) {
-            return false;
-        }
-
-        int numberOfCharacters = 0;
-        for (int i = 0; i < username.length(); i++) {
-            numberOfCharacters++;
-        }
-
-        return numberOfCharacters >= 5;
-    }
+    return numberOfCharacters >= 5;
+  }
 }
