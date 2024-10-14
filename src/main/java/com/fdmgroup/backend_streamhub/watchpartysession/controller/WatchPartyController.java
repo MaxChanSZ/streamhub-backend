@@ -118,4 +118,17 @@ public class WatchPartyController {
     return ResponseEntity.status(HttpStatus.CREATED).body(watchParty);
   }
 
+  @PostMapping("/update-password")
+  public ResponseEntity<WatchParty> updateWatchPartyPassword(
+          @RequestBody UpdateWatchPartyPasswordRequest updateWatchPartyPasswordRequest) {
+
+    WatchParty watchParty = watchPartyService.updateWatchPartyPassword(
+            updateWatchPartyPasswordRequest.getPassword(),
+            updateWatchPartyPasswordRequest.getAccountId(),
+            updateWatchPartyPasswordRequest.getWatchPartyId()
+    );
+
+    return ResponseEntity.status(HttpStatus.CREATED).body(watchParty);
+  }
+
 }

@@ -85,5 +85,24 @@ public class WatchPartyService {
             throw new RuntimeException("Account not found");
         }
     }
+
+    public WatchParty updateWatchPartyPassword(String password, Long accountID, Long watchPartyId) {
+
+        Optional<Account> account = accountRepository.findById(accountID);
+        if (account.isPresent()) {
+            Optional<WatchParty> watchParty = watchPartyRepository.findById(watchPartyId);
+            if (watchParty.isPresent()) {
+                WatchParty updatedWatchParty = watchParty.get();
+                updatedWatchParty.setPassword(password);
+                return watchPartyRepository.save(updatedWatchParty);
+
+            } else {
+                throw new RuntimeException("Watchparty not found");
+            }
+
+        } else {
+            throw new RuntimeException("Account not found");
+        }
+    }
 }
 
