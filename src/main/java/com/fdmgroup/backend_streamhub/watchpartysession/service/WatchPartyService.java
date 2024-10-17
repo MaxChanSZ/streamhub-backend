@@ -65,6 +65,10 @@ public class WatchPartyService {
         return watchPartyRepository.findWatchPartiesWithPoll();
     }
 
+    public List<WatchParty> getAllWatchPartiesWithoutPoll() {
+        return watchPartyRepository.findWatchPartiesWithoutPoll();
+    }
+
     public WatchParty updateWatchParty(String partyName, Long accountID, String scheduledDate, String scheduledTime, Long watchPartyId) {
 
         Optional<Account> account = accountRepository.findById(accountID);

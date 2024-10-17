@@ -103,6 +103,12 @@ public class WatchPartyController {
     return ResponseEntity.ok(watchParties);
   }
 
+  @GetMapping("/get/without-poll")
+  public ResponseEntity<List<WatchParty>> getAllWatchPartiesWithoutPoll() {
+    List<WatchParty> watchParties = watchPartyService.getAllWatchPartiesWithoutPoll();
+    return ResponseEntity.ok(watchParties);
+  }
+
   @PostMapping("/update")
   public ResponseEntity<WatchParty> updateWatchParty(
           @RequestBody UpdateWatchPartyRequest updateWatchPartyRequest) {

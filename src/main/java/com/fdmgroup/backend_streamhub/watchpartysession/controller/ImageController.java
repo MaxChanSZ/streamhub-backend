@@ -36,4 +36,19 @@ public class ImageController {
             throw new RuntimeException(e);
         }
     }
+
+    @PostMapping("/delete")
+    public String removeImageFromStorage(
+            @RequestParam("fileName") String fileName,
+            @RequestParam("directory") String directory) {
+        try {
+            String path = "src/main/resources/" + directory;
+            Path deletePath = Path.of(path);
+            Path filePath = deletePath.resolve(fileName);
+            Files.deleteIfExists(filePath);
+            return fileName;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
