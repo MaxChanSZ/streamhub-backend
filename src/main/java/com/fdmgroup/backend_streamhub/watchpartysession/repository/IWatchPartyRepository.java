@@ -19,4 +19,3 @@ public interface IWatchPartyRepository extends JpaRepository<WatchParty, Long> {
     @Query(value = "SELECT * FROM watch_party w WHERE w.id NOT IN (SELECT p.watchparty_id FROM poll p)", nativeQuery = true)
     List<WatchParty> findWatchPartiesWithoutPoll();
 }
-

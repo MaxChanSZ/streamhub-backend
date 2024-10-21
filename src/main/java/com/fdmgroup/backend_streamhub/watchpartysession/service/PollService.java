@@ -207,6 +207,4 @@ public class PollService {
     public void deletePollOption(Long pollOptionId) {
         pollOptionRepository.deleteById(pollOptionId);
     }
-
-
 }
