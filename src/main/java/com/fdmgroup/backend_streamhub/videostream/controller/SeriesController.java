@@ -25,15 +25,20 @@ public class SeriesController {
     VideoService videoService;
 
     @GetMapping
-    private ResponseEntity<List<Series>> getSeries(@RequestParam(name = "title", required = false) String title) {
+    private ResponseEntity<List<Series>> getSeries(@RequestParam(name = "title", required = false) String title,
+                                                   @RequestParam(name = "description", required = false) String description,
+                                                   @RequestParam(name = "category", required = false) String category) {
         // TODO: Implement pagination of series instead of returning all series
         // TODO: Decide which properties of the video need to be sent over to the frontend
         List<Series> seriesList;
-        if ( title == null ) {
-            seriesList = seriesService.findAllSeries();
+        if (title != null || description != null) {
+            seriesList = seriesService.findSeriesByTitleOrDescription(title, description);
+        } else if (category != null) {
+            seriesList = seriesService.findSeriesByCategory(category);
         } else {
-            seriesList = seriesService.findSeriesByTitle(title);
+            seriesList = seriesService.findAllSeries();
         }
+
         seriesList.forEach(series -> series.setThumbnailURL( THUMBNAIL_BASE_URL + series.getThumbnailURL() ));
         return ResponseEntity.ok(seriesList);
     }
@@ -65,5 +70,11 @@ public class SeriesController {
         List<Series> seriesList = seriesService.findTopRatedSeries(5);
         seriesList.forEach(series -> series.setThumbnailURL(THUMBNAIL_BASE_URL + series.getThumbnailURL()));
         return ResponseEntity.ok(seriesList);
+    }
+
+    @GetMapping("/categories")
+    private ResponseEntity<List<String>> getSeriesCategories() {
+        List<String> categoryList = seriesService.findUniqueCategories();
+        return ResponseEntity.ok(categoryList);
     }
 }

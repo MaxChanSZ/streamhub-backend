@@ -20,8 +20,16 @@ public class SeriesService {
         return seriesRepository.findAll();
     }
 
-    public List<Series> findSeriesByTitle(String title) {
-        return seriesRepository.findBySeriesTitleContaining(title);
+    public List<Series> findSeriesByTitleOrDescription(String title, String description) {
+        return seriesRepository.findBySeriesTitleOrDescription(title, description);
+    }
+
+    public List<Series> findSeriesByCategory(String category) {
+        return seriesRepository.findByCategory(category);
+    }
+
+    public List<String> findUniqueCategories() {
+        return seriesRepository.findUniqueCategories();
     }
 
     public Optional<Series> findSeries(long id) {

@@ -27,6 +27,7 @@ public class Series {
     private String thumbnailURL;
     private byte rating;
     private String cast;
+    private String category;
 
     @OneToMany(mappedBy = "series")
     @JsonIgnore
