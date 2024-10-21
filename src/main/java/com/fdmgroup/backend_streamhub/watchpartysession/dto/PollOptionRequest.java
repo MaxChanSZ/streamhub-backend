@@ -1,10 +1,11 @@
 package com.fdmgroup.backend_streamhub.watchpartysession.dto;
 
-public class CreatePollOptionRequest {
+public class PollOptionRequest {
     private String description;
     private String fileName;
     private String value;
     private Long pollID;
+    private Long pollOptionID;
 
     public Long getPollID() {
         return pollID;
@@ -36,5 +37,13 @@ public class CreatePollOptionRequest {
 
     public void setFileName(String fileName) {
         this.fileName = fileName;
+    }
+
+    public Long getPollOptionID() {
+        return pollOptionID;
+    }
+
+    public void setPollOptionID(Long pollOptionID) {
+        this.pollOptionID = pollOptionID;
     }
 }

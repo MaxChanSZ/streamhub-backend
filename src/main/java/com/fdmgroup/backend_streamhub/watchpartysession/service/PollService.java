@@ -137,4 +137,74 @@ public class PollService {
 
         return response;
     }
+
+    public Poll updatePoll(Long accountID, Long pollId,  String question) {
+
+        Optional<Account> account = accountRepository.findById(accountID);
+        if (account.isPresent()) {
+            Optional<Poll> poll = pollRepository.findById(pollId);
+            if (poll.isPresent()) {
+                Poll updatedPoll = poll.get();
+                if (!question.equals(updatedPoll.getQuestion())) {
+                    updatedPoll.setQuestion(question);
+                    return pollRepository.save(updatedPoll);
+                }
+                return updatedPoll;
+            } else {
+                throw new RuntimeException("Poll not found");
+            }
+
+        } else {
+            throw new RuntimeException("Account not found");
+        }
+    }
+
+    public PollOption updateOption(Long accountID, Long pollOptionId, String value, String description, String fileName) {
+
+        Optional<Account> account = accountRepository.findById(accountID);
+        if (account.isPresent()) {
+            Optional<PollOption> pollOption = pollOptionRepository.findById(pollOptionId);
+            if (pollOption.isPresent()) {
+                PollOption updatedPollOption = pollOption.get();
+                boolean pollOptionChanged = false;
+                if (!value.equals(updatedPollOption.getValue())) {
+                    updatedPollOption.setValue(value);
+                    pollOptionChanged = true;
+                }
+
+                if (description == null && updatedPollOption.getDescription() != null){
+                    updatedPollOption.setDescription(null);
+                    pollOptionChanged = true;
+                } else if (description != null && !description.equals(updatedPollOption.getDescription())) {
+                    updatedPollOption.setDescription(description);
+                    pollOptionChanged = true;
+                }
+
+                if (fileName != null) {
+                    // save image url in the db if there is any images
+                    if (!fileName.equals(updatedPollOption.getImageUrl())) {
+                        updatedPollOption.setImageUrl(fileName);
+                        pollOptionChanged = true;
+                    }
+                } else {
+                    // delete image url if the image is to be removed
+                    if (updatedPollOption.getImageUrl() != null) {
+                        updatedPollOption.setImageUrl(null);
+                        pollOptionChanged = true;
+                    }
+                }
+                return pollOptionChanged ? pollOptionRepository.save(updatedPollOption) : updatedPollOption;
+
+            } else {
+                throw new RuntimeException("Poll Option not found");
+            }
+
+        } else {
+            throw new RuntimeException("Account not found");
+        }
+    }
+
+    public void deletePollOption(Long pollOptionId) {
+        pollOptionRepository.deleteById(pollOptionId);
+    }
 }

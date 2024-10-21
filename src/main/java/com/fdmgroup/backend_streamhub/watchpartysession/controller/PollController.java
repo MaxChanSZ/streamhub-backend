@@ -1,8 +1,6 @@
 package com.fdmgroup.backend_streamhub.watchpartysession.controller;
 
-import com.fdmgroup.backend_streamhub.watchpartysession.dto.CreatePollOptionRequest;
-import com.fdmgroup.backend_streamhub.watchpartysession.dto.CreatePollRequest;
-import com.fdmgroup.backend_streamhub.watchpartysession.dto.WatchPartyPollResponse;
+import com.fdmgroup.backend_streamhub.watchpartysession.dto.*;
 import com.fdmgroup.backend_streamhub.watchpartysession.model.Poll;
 import com.fdmgroup.backend_streamhub.watchpartysession.model.PollOption;
 import com.fdmgroup.backend_streamhub.watchpartysession.service.PollService;
@@ -32,7 +30,7 @@ public class PollController {
             );
             if (poll != null) {
                 // then create options for the poll
-                for (CreatePollOptionRequest request : createPollRequest.getPollOptionRequests()) {
+                for (PollOptionRequest request : createPollRequest.getPollOptionRequests()) {
                     //String uniqueFileName = generateImageUrl(request.getImage(), request.getImageOptionUrl());
                     // save option in db
                     PollOption pollOption = pollService.createOption(
@@ -60,4 +58,49 @@ public class PollController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    @PostMapping("/update")
+    public ResponseEntity<Poll> updatePoll(
+            @RequestBody UpdatePollRequest updatePollRequest) {
+
+        // update poll question
+        Poll updatedPoll = pollService.updatePoll(
+                updatePollRequest.getAccountID(),
+                updatePollRequest.getPollID(),
+                updatePollRequest.getQuestion()
+        );
+
+        List<PollOption> currentPollOptions = pollService.getPollOptionsByPoll(updatePollRequest.getPollID());
+        int updatedOptionsCount = 0;
+
+        // update poll options
+        for(PollOptionRequest request: updatePollRequest.getPollOptionRequests()) {
+            updatedOptionsCount++;
+            if(updatedOptionsCount > currentPollOptions.size()) {
+                PollOption newOption = pollService.createOption(
+                        updatePollRequest.getPollID(),
+                        request.getValue(),
+                        request.getDescription(),
+                        request.getFileName()
+                );
+            } else {
+                PollOption updatedOption = pollService.updateOption(
+                        updatePollRequest.getAccountID(),
+                        request.getPollOptionID(),
+                        request.getValue(),
+                        request.getDescription(),
+                        request.getFileName()
+                );
+            }
+        }
+
+        // remove the remaining poll options if the new option list size is smaller
+        if (updatedOptionsCount < currentPollOptions.size()) {
+            List<PollOption> optionsToRemove = currentPollOptions.subList(updatedOptionsCount, currentPollOptions.size());
+            for(PollOption option: optionsToRemove) {
+                pollService.deletePollOption(option.getId());
+            }
+        }
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(updatedPoll);
+    }
 }

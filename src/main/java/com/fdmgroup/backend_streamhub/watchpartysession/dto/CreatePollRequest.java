@@ -3,7 +3,7 @@ package com.fdmgroup.backend_streamhub.watchpartysession.dto;
 public class CreatePollRequest {
     private String question;
     private String partyCode;
-    private CreatePollOptionRequest[] pollOptionRequests;
+    private PollOptionRequest[] pollOptionRequests;
 
     public String getQuestion() {
         return question;
@@ -21,11 +21,11 @@ public class CreatePollRequest {
         this.partyCode = partyCode;
     }
 
-    public CreatePollOptionRequest[] getPollOptionRequests() {
+    public PollOptionRequest[] getPollOptionRequests() {
         return pollOptionRequests;
     }
 
-    public void setPollOptionRequests(CreatePollOptionRequest[] pollOptionRequests) {
+    public void setPollOptionRequests(PollOptionRequest[] pollOptionRequests) {
         this.pollOptionRequests = pollOptionRequests;
     }
 }
