@@ -20,8 +20,7 @@ public class VideoChatbotService {
 
     private final String GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
     private final String PRE_PROMPT = "You are an AI assistant that analyzes Steamboat Willie. Make it short and concise " +
-            "Respond to the user's input, but make sure your response is always about Steamboat Willie. " +
-            "If the user's input is not related to Steamboat Willie, gently steer the conversation back to this topic.";
+            "Respond to the user's input, but make sure your response is always about Steamboat Willie. " ;
 
     public String generateResponse(String userInput) {
         RestTemplate restTemplate = new RestTemplate();
